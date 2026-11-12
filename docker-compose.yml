@@ -109,27 +109,31 @@ services:
       "
 
   # ----------------------------------------------------------------------------
-  # 5. BACKEND CORE API (FastAPI) — [Sprint 1 Target]
+  # 5. BACKEND CORE API (FastAPI) — [Sprint 1 Implemented]
   # ----------------------------------------------------------------------------
-  # backend-api:
-  #   build:
-  #     context: ./Backend
-  #     dockerfile: Dockerfile
-  #   container_name: clearly-backend-api
-  #   restart: unless-stopped
-  #   environment:
-  #     DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-clearly_admin}:${POSTGRES_PASSWORD:-clearly_secure_pass_2026!}@postgres:5432/${POSTGRES_DB:-clearly_db}
-  #     REDIS_URL: redis://redis:6379/0
-  #     MINIO_ENDPOINT: minio:9000
-  #   ports:
-  #     - "8000:8000"
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
-  #     redis:
-  #       condition: service_healthy
-  #     minio:
-  #       condition: service_healthy
-  #   networks:
-  #     - clearly-network
+  backend-api:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: clearly-backend-api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-clearly_admin}:${POSTGRES_PASSWORD:-clearly_secure_pass_2026!}@postgres:5432/${POSTGRES_DB:-clearly_db}
+      REDIS_URL: redis://redis:6379/0
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-clearly_minio_admin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-clearly_minio_secret_key_2026!}
+      MINIO_DOCUMENTS_BUCKET: ${MINIO_DOCUMENTS_BUCKET:-clearly-documents}
+      MINIO_AUDIO_BUCKET: ${MINIO_AUDIO_BUCKET:-clearly-audio}
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks:
+      - clearly-network
 

@@ -96,6 +96,8 @@ redisdata/
 # Audio & Temporary Uploads
 temp_audio/
 temp_uploads/
+Backend/storage/documents/*
+!Backend/storage/documents/.gitkeep
 *.wav
 *.mp3
 *.ogg

@@ -140,11 +140,11 @@ docker exec -it clearly-postgres psql -U clearly_admin -d clearly_db -c "SELECT 
   - [x] Inicialización de Git y reglas `.gitignore` / `.gitattributes`.
   - [x] Orquestación Docker Compose (`PostgreSQL 16 + pgvector`, `Redis 7`, `MinIO`).
   - [x] Modelado DDL completo en `/Database` con índices HNSW y seed data de Brampton.
-- [ ] **Sprint 1: Backend Core & Hero Feature de Traducción Documental**
-  - [ ] Setup de FastAPI en `/Backend` con Pydantic v2.
-  - [ ] Motor de extracción de fechas determinista (evita alucinación de plazos).
-  - [ ] Auditor sintáctico *Fernández-Huerta* ($FH \ge 80$) y guardrail legal anti-asesoría.
-  - [ ] Endpoint `/api/v1/documents/process` con soporte MinIO y PostgreSQL.
+- [x] **Sprint 1: Backend Core & Hero Feature de Traducción Documental**
+  - [x] Setup de FastAPI en `/Backend` con Pydantic v2.
+  - [x] Motor de extracción de fechas determinista (evita alucinación de plazos).
+  - [x] Auditor sintáctico *Fernández-Huerta* ($FH \ge 80$) y guardrail legal anti-asesoría.
+  - [x] Endpoint `/api/v1/documents/process` con soporte MinIO y PostgreSQL.
 - [ ] **Sprint 2: Frontend Web Accesible (Next.js 14)**
   - [ ] Tipografía *Atkinson Hyperlegible* y temas de alto contraste.
   - [ ] Componente accesible de subida y visualización de cartas en 3 capas.
