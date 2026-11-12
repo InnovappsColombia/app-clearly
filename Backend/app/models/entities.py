@@ -40,6 +40,8 @@ class TutorRelationshipEntity(BaseModel):
     pairing_code_hash: Optional[str] = None
     duress_pin_hash: Optional[str] = None
     is_active: bool = True
+    is_duress_active: bool = False
+    duress_activated_at: Optional[datetime] = None
     permissions: Dict[str, bool] = Field(
         default_factory=lambda: {
             "can_view_critical_alerts": True,
@@ -50,6 +52,47 @@ class TutorRelationshipEntity(BaseModel):
     )
     created_at: datetime = Field(default_factory=get_utc_now)
     revoked_at: Optional[datetime] = None
+
+
+class TutorPairingCodeEntity(BaseModel):
+    code: str
+    senior_id: UUID
+    created_at: datetime = Field(default_factory=get_utc_now)
+    expires_at: datetime
+    is_redeemed: bool = False
+
+
+class DuressAlertEntity(BaseModel):
+    id: UUID = Field(default_factory=uuid4)
+    senior_id: UUID
+    triggered_at: datetime = Field(default_factory=get_utc_now)
+    quarantine_token: str
+    social_worker_alert_sent: bool = True
+    status: str = "active"
+
+
+class CommunityEventEntity(BaseModel):
+    id: UUID = Field(default_factory=uuid4)
+    external_id: Optional[str] = None
+    source: str = "civic_library"
+    raw_title: str
+    made_clear_what: str
+    made_clear_when_where: str
+    made_clear_cost: str
+    made_clear_how_to_register: str
+    event_url: Optional[str] = None
+    audio_summary_path: Optional[str] = None
+    start_time: datetime
+    end_time: Optional[datetime] = None
+    venue_name: Optional[str] = None
+    venue_address: Optional[str] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    is_wheelchair_accessible: bool = True
+    is_senior_friendly: bool = True
+    is_free: bool = True
+    supported_languages: List[str] = Field(default_factory=lambda: ["es", "en"])
+    created_at: datetime = Field(default_factory=get_utc_now)
 
 
 class DocumentActionEntity(BaseModel):

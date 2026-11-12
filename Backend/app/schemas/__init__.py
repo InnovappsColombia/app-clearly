@@ -9,6 +9,23 @@ from app.schemas.document import (
     DateExtractionRequest,
     DateExtractionResponse,
 )
+from app.schemas.tutor import (
+    PairingCodeRequest,
+    PairingCodeResponse,
+    PairTutorRequest,
+    PairTutorResponse,
+    TutorSeniorSummaryResponse,
+    TutorDashboardResponse,
+    CollaborativeTaskItem,
+    ChecklistToggleRequest,
+    ChecklistToggleResponse,
+    DuressTriggerRequest,
+    DuressTriggerResponse,
+)
+from app.schemas.whatsapp import (
+    EvolutionWebhookPayload,
+    WhatsAppProcessResult,
+)
 
 __all__ = [
     "ActionItemBase",
@@ -19,5 +36,18 @@ __all__ = [
     "ReadabilityAuditResponse",
     "DateExtractionRequest",
     "DateExtractionResponse",
+    "PairingCodeRequest",
+    "PairingCodeResponse",
+    "PairTutorRequest",
+    "PairTutorResponse",
+    "TutorSeniorSummaryResponse",
+    "TutorDashboardResponse",
+    "CollaborativeTaskItem",
+    "ChecklistToggleRequest",
+    "ChecklistToggleResponse",
+    "DuressTriggerRequest",
+    "DuressTriggerResponse",
+    "EvolutionWebhookPayload",
+    "WhatsAppProcessResult",
 ]
 

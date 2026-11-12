@@ -1,6 +1,6 @@
 """
 CLEARLY Backend — Comprehensive Test Runner
-Executes all unit, integration, and API tests for Sprint 1.
+Executes all unit, integration, and API tests for Sprint 1 and Sprint 3 (WhatsApp & Tutor Hub).
 """
 
 import unittest
@@ -20,7 +20,7 @@ def run_all_tests():
     result = runner.run(suite)
 
     print("\n" + "=" * 60)
-    print(f"CLEARLY Sprint 1 Test Results: Ran {result.testsRun} tests.")
+    print(f"CLEARLY Test Suite Results: Ran {result.testsRun} tests.")
     if result.wasSuccessful():
         print("✅ ALL TESTS PASSED SUCCESSFULLY!")
         return 0

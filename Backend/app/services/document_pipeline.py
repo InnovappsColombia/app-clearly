@@ -17,6 +17,7 @@ from app.services.date_extractor import extract_deterministic_deadline
 from app.services.ocr_service import ocr_service
 from app.services.plain_language import analyze_document_plain_language
 from app.services.storage import storage_service
+from app.services.connection_manager import ws_manager
 
 
 class DocumentPipeline:
@@ -131,6 +132,29 @@ class DocumentPipeline:
                     logger.warning(
                         f"Dispatched proactive alert to Tutor {tutor_rel.tutor_id} for doc {saved_doc.id}"
                     )
+
+            # Broadcast critical alert to active WebSocket connections
+            await ws_manager.broadcast_critical_alert(
+                str(user_id),
+                {
+                    "document_id": str(saved_doc.id),
+                    "issuing_entity": analysis.issuing_entity,
+                    "deadline": str(critical_deadline),
+                    "days_remaining": days_remaining,
+                    "plain_summary": analysis.plain_summary,
+                },
+            )
+
+        # Broadcast new document event
+        await ws_manager.broadcast_new_document(
+            str(user_id),
+            {
+                "document_id": str(saved_doc.id),
+                "issuing_entity": analysis.issuing_entity,
+                "urgency": urgency,
+                "critical_deadline": str(critical_deadline) if critical_deadline else None,
+            },
+        )
 
         return DocumentProcessResponse(
             id=saved_doc.id,

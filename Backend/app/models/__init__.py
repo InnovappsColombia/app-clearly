@@ -2,6 +2,9 @@
 from app.models.entities import (
     UserEntity,
     TutorRelationshipEntity,
+    TutorPairingCodeEntity,
+    DuressAlertEntity,
+    CommunityEventEntity,
     DocumentEntity,
     DocumentActionEntity,
     NotificationEntity,
@@ -10,6 +13,9 @@ from app.models.entities import (
 __all__ = [
     "UserEntity",
     "TutorRelationshipEntity",
+    "TutorPairingCodeEntity",
+    "DuressAlertEntity",
+    "CommunityEventEntity",
     "DocumentEntity",
     "DocumentActionEntity",
     "NotificationEntity",
