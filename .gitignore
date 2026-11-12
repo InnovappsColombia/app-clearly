@@ -1,0 +1,122 @@
+# ==========================================
+# CLEARLY — .gitignore
+# Local-First Civic Accessibility Platform
+# ==========================================
+
+# Environment variables & secrets (CRITICAL)
+.env
+.env.local
+.env.*.local
+*.env
+*.pem
+*.key
+certs/
+secrets/
+
+# Python & Virtual Environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Node.js & Frontend (Next.js / React Native)
+node_modules/
+.pnp
+.pnp.js
+.next/
+out/
+.turbo/
+*.tsbuildinfo
+next-env.d.ts
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Mobile (React Native / Expo)
+.expo/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+
+# AI Models, Checkpoints & Large Binaries (> 50MB)
+*.gguf
+*.bin
+*.safetensors
+*.pt
+*.pth
+*.onnx
+models/weights/
+models/checkpoints/
+RAG/models/cache/
+.cache/
+huggingface_cache/
+
+# Database & Local Storage Volumes
+pgdata/
+miniodata/
+redisdata/
+*.sqlite
+*.sqlite3
+*.db
+*.dump
+
+# Audio & Temporary Uploads
+temp_audio/
+temp_uploads/
+*.wav
+*.mp3
+*.ogg
+*.opus
+
+# Operating System & IDEs
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.sublime-workspace
+*.swp
+*.swo
+
+# Docker logs
+*.log
+docker-data/

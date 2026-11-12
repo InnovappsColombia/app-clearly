@@ -1,0 +1,134 @@
+version: '3.8'
+
+# ==============================================================================
+# CLEARLY — Local-First Sovereign Infrastructure Stack
+# Services: PostgreSQL 16 (pgvector), Redis 7, MinIO S3 Object Storage
+# ==============================================================================
+
+networks:
+  clearly-network:
+    name: clearly-network
+    driver: bridge
+
+volumes:
+  pgdata:
+    name: clearly_pgdata
+  miniodata:
+    name: clearly_miniodata
+  redisdata:
+    name: clearly_redisdata
+
+services:
+  # ----------------------------------------------------------------------------
+  # 1. BASE DE DATOS SOBERANA: PostgreSQL 16 con extensión pgvector
+  # ----------------------------------------------------------------------------
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: clearly-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-clearly_db}
+      POSTGRES_USER: ${POSTGRES_USER:-clearly_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-clearly_secure_pass_2026!}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./Database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "5432:5432"
+    networks:
+      - clearly-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-clearly_admin} -d ${POSTGRES_DB:-clearly_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ----------------------------------------------------------------------------
+  # 2. BROKER DE MENSAJES Y CACHÉ: Redis 7
+  # ----------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: clearly-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redisdata:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - clearly-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ----------------------------------------------------------------------------
+  # 3. ALMACENAMIENTO DE OBJETOS S3 AUTOHOSPEDADO: MinIO
+  # ----------------------------------------------------------------------------
+  minio:
+    image: minio/minio:RELEASE.2024-05-10T01-41-38Z
+    container_name: clearly-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-clearly_minio_admin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-clearly_minio_secret_key_2026!}
+    volumes:
+      - miniodata:/data
+    ports:
+      - "9000:9000" # API S3
+      - "9001:9001" # Web Console UI
+    networks:
+      - clearly-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9000/minio/health/live || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ----------------------------------------------------------------------------
+  # 4. MINIO BUCKET INITIALIZER (Creación automática de buckets privados)
+  # ----------------------------------------------------------------------------
+  create-buckets:
+    image: minio/mc:latest
+    container_name: clearly-minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    networks:
+      - clearly-network
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc alias set clearly http://minio:9000 ${MINIO_ROOT_USER:-clearly_minio_admin} ${MINIO_ROOT_PASSWORD:-clearly_minio_secret_key_2026!};
+      /usr/bin/mc mb clearly/${MINIO_DOCUMENTS_BUCKET:-clearly-documents} --ignore-existing;
+      /usr/bin/mc mb clearly/${MINIO_AUDIO_BUCKET:-clearly-audio} --ignore-existing;
+      echo 'MinIO buckets successfully initialized!';
+      exit 0;
+      "
+
+  # ----------------------------------------------------------------------------
+  # 5. BACKEND CORE API (FastAPI) — [Sprint 1 Target]
+  # ----------------------------------------------------------------------------
+  # backend-api:
+  #   build:
+  #     context: ./Backend
+  #     dockerfile: Dockerfile
+  #   container_name: clearly-backend-api
+  #   restart: unless-stopped
+  #   environment:
+  #     DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-clearly_admin}:${POSTGRES_PASSWORD:-clearly_secure_pass_2026!}@postgres:5432/${POSTGRES_DB:-clearly_db}
+  #     REDIS_URL: redis://redis:6379/0
+  #     MINIO_ENDPOINT: minio:9000
+  #   ports:
+  #     - "8000:8000"
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_healthy
+  #     minio:
+  #       condition: service_healthy
+  #   networks:
+  #     - clearly-network
