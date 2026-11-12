@@ -109,6 +109,26 @@ class Settings(BaseModel):
     # Tutor Alert Threshold (days)
     TUTOR_ALERT_THRESHOLD_DAYS: int = 15
 
+    # Sprint 3: Evolution API (WhatsApp Gateway)
+    EVOLUTION_API_URL: str = Field(default_factory=lambda: os.getenv("EVOLUTION_API_URL", "http://localhost:8080"))
+    EVOLUTION_API_KEY: str = Field(default_factory=lambda: os.getenv("EVOLUTION_API_KEY", "clearly_evolution_api_key_2026"))
+    EVOLUTION_INSTANCE_NAME: str = Field(default_factory=lambda: os.getenv("EVOLUTION_INSTANCE_NAME", "clearly-default"))
+    EVOLUTION_WEBHOOK_SECRET: str = Field(default_factory=lambda: os.getenv("EVOLUTION_WEBHOOK_SECRET", "clearly_webhook_secret_2026"))
+    WHATSAPP_RATE_LIMIT_BUCKET_SIZE: int = Field(default_factory=lambda: int(os.getenv("WHATSAPP_RATE_LIMIT_BUCKET_SIZE", "30")))
+    WHATSAPP_SIMULATE_JITTER: bool = Field(default_factory=lambda: os.getenv("WHATSAPP_SIMULATE_JITTER", "False").lower() in ("true", "1"))
+
+    # Sprint 3: Gerontological Voice Engine (faster-whisper + Piper TTS)
+    FASTER_WHISPER_MODEL: str = Field(default_factory=lambda: os.getenv("FASTER_WHISPER_MODEL", "base"))
+    FASTER_WHISPER_DEVICE: str = Field(default_factory=lambda: os.getenv("FASTER_WHISPER_DEVICE", "cpu"))
+    VAD_MIN_SILENCE_DURATION_MS: int = Field(default_factory=lambda: int(os.getenv("VAD_MIN_SILENCE_DURATION_MS", "4500")))
+    VAD_THRESHOLD: float = Field(default_factory=lambda: float(os.getenv("VAD_THRESHOLD", "0.30")))
+    VAD_PRE_ROLL_MS: int = Field(default_factory=lambda: int(os.getenv("VAD_PRE_ROLL_MS", "600")))
+    PIPER_VOICE_MODEL: str = Field(default_factory=lambda: os.getenv("PIPER_VOICE_MODEL", "es_ES-davefx-medium"))
+
+    # Sprint 3: Tutor Handshake & Duress Security (FMEA FM-04)
+    TUTOR_PAIRING_CODE_TTL_MINUTES: int = 15
+    DURESS_PIN_DEFAULT: str = Field(default_factory=lambda: os.getenv("DURESS_PIN_DEFAULT", "9876"))
+
 
 settings = Settings()
 
