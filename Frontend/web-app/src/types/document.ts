@@ -66,3 +66,4 @@ export interface CommunityEvent {
   organizer: string;
   date_label: string;
 }
+

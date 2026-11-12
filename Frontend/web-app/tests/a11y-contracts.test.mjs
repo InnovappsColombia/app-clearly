@@ -85,3 +85,4 @@ test("Gold Standard Sample Documents: Fernandez-Huerta >= 80 Criteria", async ()
     assert.ok(s.deadline !== null, `Documento ${s.name} debe tener fecha límite extraída`);
   }
 });
+

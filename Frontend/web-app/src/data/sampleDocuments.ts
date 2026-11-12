@@ -248,3 +248,4 @@ export const SAMPLE_EVENTS: CommunityEvent[] = [
     date_label: "Vie 21 Nov",
   },
 ];
+
