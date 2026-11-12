@@ -123,6 +123,8 @@ docker compose ps
 | **Redis 7** | `6379` | Broker de mensajes y caché de sesiones | Sin contraseña en dev |
 | **MinIO S3** | `9000` | Almacenamiento S3 de documentos y audios | `clearly_minio_admin` / `clearly_minio_secret_key_2026!` |
 | **MinIO Console** | `9001` | Interfaz web de administración de objetos | http://localhost:9001 |
+| **Backend Core (FastAPI)** | `8000` | API REST & Hero Feature de Documentos | http://localhost:8000/docs |
+| **Frontend Web (Next.js 14)** | `3000` | App Web Accesible WCAG 2.1 AAA | http://localhost:3000 |
 
 ### **Paso 4: Comprobar la Base de Datos y Extensión Vectorial**
 Conéctate a PostgreSQL para verificar que la extensión `vector` y los datos semilla estén activos:
@@ -130,6 +132,15 @@ Conéctate a PostgreSQL para verificar que la extensión `vector` y los datos se
 docker exec -it clearly-postgres psql -U clearly_admin -d clearly_db -c "\dx"
 docker exec -it clearly-postgres psql -U clearly_admin -d clearly_db -c "SELECT full_name, role FROM users;"
 docker exec -it clearly-postgres psql -U clearly_admin -d clearly_db -c "SELECT raw_title, made_clear_cost FROM community_events;"
+```
+
+### **Paso 5: Ejecución Local del Frontend Web Accesible**
+```bash
+cd Frontend/web-app
+npm install
+npm run dev      # Servidor de desarrollo en http://localhost:3000
+npm run build    # Compilación optimizada de producción
+npm test         # Pruebas automatizadas de accesibilidad y contraste WCAG AAA
 ```
 
 ---
@@ -145,10 +156,13 @@ docker exec -it clearly-postgres psql -U clearly_admin -d clearly_db -c "SELECT 
   - [x] Motor de extracción de fechas determinista (evita alucinación de plazos).
   - [x] Auditor sintáctico *Fernández-Huerta* ($FH \ge 80$) y guardrail legal anti-asesoría.
   - [x] Endpoint `/api/v1/documents/process` con soporte MinIO y PostgreSQL.
-- [ ] **Sprint 2: Frontend Web Accesible (Next.js 14)**
-  - [ ] Tipografía *Atkinson Hyperlegible* y temas de alto contraste.
-  - [ ] Componente accesible de subida y visualización de cartas en 3 capas.
-  - [ ] Lector TTS local integrado en navegador.
+- [x] **Sprint 2: Frontend Web Accesible (Next.js 14)**
+  - [x] Tipografía oficial *Atkinson Hyperlegible* y temas de alto contraste (WCAG 2.1 AAA).
+  - [x] Barra superior de accesibilidad (A11yToolbar) con selector de escala de fuente (100% a 200%).
+  - [x] Componente accesible de subida (cámara/archivos) y visualización en 3 capas.
+  - [x] Lector TTS en navegador (Web Speech API) con control de velocidad (0.75x a 1.25x).
+  - [x] Banner protector de enlace familiar (*Modo Tutor*) y Marketplace *Made Clear*.
+  - [x] Suite de pruebas automatizadas de ratios de contraste y contratos A11y.
 - [ ] **Sprint 3: Canal WhatsApp y Tutor Hub**
   - [ ] Webhook de mensajería con Evolution API.
   - [ ] Transcripción de audios con faster-whisper y síntesis con Piper TTS.

@@ -2,7 +2,7 @@ version: '3.8'
 
 # ==============================================================================
 # CLEARLY — Local-First Sovereign Infrastructure Stack
-# Services: PostgreSQL 16 (pgvector), Redis 7, MinIO S3 Object Storage
+# Services: PostgreSQL 16 (pgvector), Redis 7, MinIO S3, FastAPI Backend, Next.js 14
 # ==============================================================================
 
 networks:
@@ -137,3 +137,22 @@ services:
     networks:
       - clearly-network
 
+  # ----------------------------------------------------------------------------
+  # 6. FRONTEND WEB ACCESIBLE (Next.js 14) — [Sprint 2 Implemented]
+  # ----------------------------------------------------------------------------
+  frontend-web:
+    build:
+      context: ./Frontend/web-app
+      dockerfile: Dockerfile
+    container_name: clearly-frontend-web
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend-api
+    networks:
+      - clearly-network

@@ -1,0 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-atkinson: 'Atkinson Hyperlegible', sans-serif;
+  --bg-primary: #FAFAFA;
+  --text-primary: #1B1B1B;
+  --card-bg: #FFFFFF;
+  --card-border: #D8D6CE;
+  --accent-blue: #4277FF;
+  --accent-baltic: #394E96;
+}
+
+html {
+  font-family: var(--font-atkinson), system-ui, sans-serif;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Accessibility Focus Visible Rings - WCAG 2.1 AAA */
+*:focus-visible {
+  outline: 4px solid #4277FF !important;
+  outline-offset: 3px !important;
+  border-radius: 4px;
+}
+
+/* Light Theme (Accessible Default) */
+.theme-light {
+  --bg-primary: #F7F5F0;
+  --text-primary: #1B1B1B;
+  --card-bg: #FFFFFF;
+  --card-border: #C5C1B9;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Dark Theme (Obsidian Black) */
+.theme-dark {
+  --bg-primary: #121212;
+  --text-primary: #F3F4F6;
+  --card-bg: #1B1B1B;
+  --card-border: #383838;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.theme-dark *:focus-visible {
+  outline: 4px solid #FFFF00 !important;
+}
+
+/* Ultra High Contrast Theme (Yellow & Black AAA) */
+.theme-high-contrast {
+  --bg-primary: #000000;
+  --text-primary: #FFFF00;
+  --card-bg: #000000;
+  --card-border: #FFFF00;
+  background-color: #000000 !important;
+  color: #FFFF00 !important;
+}
+
+.theme-high-contrast button,
+.theme-high-contrast a,
+.theme-high-contrast input,
+.theme-high-contrast select,
+.theme-high-contrast textarea {
+  border-color: #FFFF00 !important;
+  color: #FFFF00 !important;
+}
+
+.theme-high-contrast *:focus-visible {
+  outline: 5px solid #00FFFF !important;
+  outline-offset: 4px !important;
+}
+
+.theme-high-contrast .badge-urgency-critical {
+  background-color: #000000 !important;
+  color: #FF5555 !important;
+  border: 2px solid #FF5555 !important;
+}
+
+.theme-high-contrast .badge-urgency-high {
+  background-color: #000000 !important;
+  color: #FFAA00 !important;
+  border: 2px solid #FFAA00 !important;
+}
+
+.theme-high-contrast .badge-urgency-medium {
+  background-color: #000000 !important;
+  color: #FFFF00 !important;
+  border: 2px solid #FFFF00 !important;
+}
+
+.theme-high-contrast .badge-urgency-low {
+  background-color: #000000 !important;
+  color: #00FF66 !important;
+  border: 2px solid #00FF66 !important;
+}
+
+/* Skip link for screen readers */
+.skip-to-content {
+  position: absolute;
+  top: -100px;
+  left: 1rem;
+  background: #1B1B1B;
+  color: #FFFFFF;
+  padding: 1rem 1.5rem;
+  z-index: 9999;
+  font-weight: 700;
+  text-decoration: underline;
+  border-radius: 0 0 0.5rem 0.5rem;
+  transition: top 0.2s ease-in-out;
+}
+
+.skip-to-content:focus {
+  top: 0;
+}
+
+/* TTS Speaking Highlight */
+.tts-active-highlight {
+  background-color: #FFF9C4 !important;
+  color: #1B1B1B !important;
+  outline: 3px solid #FBC02D !important;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+}
+
+.theme-dark .tts-active-highlight {
+  background-color: #3E3B1E !important;
+  color: #FFF59D !important;
+  outline: 3px solid #FFF59D !important;
+}
+
+.theme-high-contrast .tts-active-highlight {
+  background-color: #FFFF00 !important;
+  color: #000000 !important;
+  outline: 4px solid #00FFFF !important;
+}
