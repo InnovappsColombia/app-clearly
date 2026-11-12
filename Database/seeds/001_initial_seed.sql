@@ -210,3 +210,4 @@ VALUES (
     '{"document_id": "88888888-8888-8888-8888-888888888888", "senior_name": "Elena Pabla"}'::jsonb
 )
 ON CONFLICT (id) DO NOTHING;
+

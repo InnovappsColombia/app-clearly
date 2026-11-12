@@ -207,3 +207,4 @@ CREATE INDEX IF NOT EXISTS idx_events_accessible ON community_events(is_wheelcha
 CREATE INDEX IF NOT EXISTS idx_expert_specialty ON expert_profiles(specialty, is_available);
 CREATE INDEX IF NOT EXISTS idx_bookings_status ON premium_bookings(status);
 CREATE INDEX IF NOT EXISTS idx_notifications_user_unread ON notifications(user_id) WHERE is_read = FALSE;
+

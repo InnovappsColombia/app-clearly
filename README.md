@@ -161,3 +161,4 @@ docker exec -it clearly-postgres psql -U clearly_admin -d clearly_db -c "SELECT 
 * [Technical Requirements Document (TRD)](file:///d:/IA-PROJECTS/app-clearly/Documentation/TRD.md)
 * [Engineering Spec & FMEA Analysis](file:///d:/IA-PROJECTS/app-clearly/Documentation/ENGINEERING_SPEC_AND_FMEA.md)
 * [Brand Book & Manifesto CLEARLY](file:///d:/IA-PROJECTS/app-clearly/Documentation/CLEARLY.md)
+
