@@ -179,3 +179,4 @@ test("Sprint 4 — Escrow State Machine Progression", () => {
   currentState = "released";
   assert.equal(currentState, "released");
 });
+

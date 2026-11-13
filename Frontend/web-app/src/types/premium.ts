@@ -59,3 +59,4 @@ export interface LiveKitRoomDetails {
   caption_font_scale: number;
   enable_realtime_transcription: boolean;
 }
+

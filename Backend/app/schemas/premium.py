@@ -96,3 +96,4 @@ class LiveKitRoomDetails(BaseModel):
     livekit_url: str
     enable_realtime_transcription: bool = True
     caption_font_scale: float = 1.5
+
