@@ -78,6 +78,23 @@ class DocumentPipeline:
         )
         saved_doc = await self.repo.create_document(doc_entity)
 
+        # 5b. Synchronize with Sovereign SQLite / sqlite-vec RAG knowledge base
+        try:
+            from RAG.adapter.backend_adapter import backend_rag_adapter
+            backend_rag_adapter.sync_document(
+                document_id=str(saved_doc.id),
+                filename=filename,
+                content=extracted_text,
+                user_id=str(user_id),
+                plain_summary=analysis.plain_summary,
+                issuing_entity=analysis.issuing_entity,
+                urgency=str(urgency),
+                critical_deadline=str(critical_deadline) if critical_deadline else None,
+                fernandez_huerta_score=analysis.fernandez_huerta_score,
+            )
+        except Exception as e:
+            logger.debug(f"Non-blocking RAG sync notice for document {saved_doc.id}: {e}")
+
         # 6. Persist Action Items
         action_responses: list[ActionItemResponse] = []
         for action in analysis.actions:

@@ -287,3 +287,39 @@ async def extract_dates_endpoint(payload: DateExtractionRequest):
         raw_snippet=result.raw_snippet,
         confidence=result.confidence,
     )
+
+
+@router.post(
+    "/query-rag",
+    summary="Consulta RAG Soberana sobre documentos locales (SQLite + sqlite-vec)",
+)
+async def query_rag_endpoint(
+    query: str = Form(..., description="Pregunta en lenguaje natural"),
+    document_id: Optional[str] = Form(None, description="Filtrar por documento específico"),
+    language: str = Form("es", description="Idioma de respuesta (es, en, pa)"),
+    user_id: UUID = Depends(get_current_user_id),
+):
+    """
+    Ejecuta una consulta grounded con búsqueda híbrida RRF (Dense BGE-M3 + Sparse FTS5)
+    sobre la base de conocimientos soberana del adulto mayor.
+    """
+    from RAG.adapter.backend_adapter import backend_rag_adapter
+
+    rag_res = backend_rag_adapter.query_senior_documents(
+        user_query=query,
+        senior_id=str(user_id),
+        document_id=document_id,
+        language=language,
+    )
+    return {
+        "query": rag_res.query,
+        "answer": rag_res.answer,
+        "language": rag_res.language,
+        "citations": rag_res.citations,
+        "retrieved_chunks_count": len(rag_res.retrieved_chunks),
+        "readability_score": rag_res.readability.score,
+        "is_plain_language": rag_res.readability.is_plain_language,
+        "requires_human_expert": rag_res.requires_human_expert,
+        "expert_reason": rag_res.expert_reason,
+        "suggested_actions": rag_res.suggested_actions,
+    }
