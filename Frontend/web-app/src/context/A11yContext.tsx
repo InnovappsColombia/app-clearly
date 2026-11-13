@@ -8,6 +8,7 @@ import React, {
   useCallback,
   ReactNode,
 } from "react";
+import { Language, Translations, TRANSLATIONS } from "../locales/translations";
 
 export type ThemeMode = "light" | "dark" | "high-contrast";
 export type TextScale = 100 | 125 | 150 | 175 | 200;
@@ -27,6 +28,11 @@ interface A11yContextType {
 
   lineSpacing: "normal" | "relaxed" | "loose";
   setLineSpacing: (spacing: "normal" | "relaxed" | "loose") => void;
+
+  // i18n Language
+  language: Language;
+  setLanguage: (lang: Language) => void;
+  t: Translations;
 
   // TTS Engine (In-Browser Web Speech API + SpeechSynthesis)
   isSpeaking: boolean;
@@ -52,6 +58,9 @@ export function A11yProvider({ children }: { children: ReactNode }) {
   const [textScale, setTextScaleState] = useState<TextScale>(125); // Default 125% for seniors
   const [theme, setThemeState] = useState<ThemeMode>("light");
   const [lineSpacing, setLineSpacing] = useState<"normal" | "relaxed" | "loose">("relaxed");
+  const [language, setLanguageState] = useState<Language>("es");
+
+  const t = TRANSLATIONS[language];
 
   // TTS State
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -79,10 +88,25 @@ export function A11yProvider({ children }: { children: ReactNode }) {
         if (savedSpeed) {
           setTtsSpeed(Number(savedSpeed) as TtsSpeed);
         }
+        const savedLang = localStorage.getItem("clearly_language") as Language;
+        if (savedLang && ["es", "en", "pa"].includes(savedLang)) {
+          setLanguageState(savedLang);
+        }
       } catch {
         // Ignore localStorage errors
       }
     }
+  }, []);
+
+  const setLanguage = useCallback((lang: Language) => {
+    setLanguageState(lang);
+    try {
+      localStorage.setItem("clearly_language", lang);
+    } catch {
+      // Ignore
+    }
+    const label = lang === "es" ? "Español" : lang === "en" ? "English" : "ਪੰਜਾਬੀ";
+    setAnnounceMessage(lang === "es" ? `Idioma cambiado a ${label}` : lang === "en" ? `Language changed to ${label}` : `ਬੋਲੀ ${label} ਵਿੱਚ ਬਦਲੀ ਗਈ`);
   }, []);
 
   // Apply theme & font scale to <html> element
@@ -194,18 +218,19 @@ export function A11yProvider({ children }: { children: ReactNode }) {
 
       if (!cleanText) return;
 
+      const langCode = language === "pa" ? "pa-IN" : language === "en" ? "en-US" : "es-ES";
       const utterance = new SpeechSynthesisUtterance(cleanText);
       utterance.rate = ttsSpeed;
       utterance.pitch = 1.0;
-      utterance.lang = "es-ES";
+      utterance.lang = langCode;
 
       // Select natural sounding voice if available
       const voices = window.speechSynthesis.getVoices();
-      const spanishVoice = voices.find(
-        (v) => v.lang.startsWith("es") || v.name.toLowerCase().includes("spanish")
+      const preferredVoice = voices.find(
+        (v) => v.lang.startsWith(langCode.slice(0, 2)) || v.lang.includes(langCode)
       );
-      if (spanishVoice) {
-        utterance.voice = spanishVoice;
+      if (preferredVoice) {
+        utterance.voice = preferredVoice;
       }
 
       utterance.onstart = () => {
@@ -282,6 +307,9 @@ export function A11yProvider({ children }: { children: ReactNode }) {
         toggleTheme,
         lineSpacing,
         setLineSpacing,
+        language,
+        setLanguage,
+        t,
         isSpeaking,
         isPaused,
         ttsSpeed,

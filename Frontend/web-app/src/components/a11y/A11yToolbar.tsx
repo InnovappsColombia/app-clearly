@@ -15,6 +15,8 @@ import {
   HelpCircle,
   X,
   Keyboard,
+  Languages,
+  Globe,
 } from "lucide-react";
 
 export function A11yToolbar() {
@@ -26,6 +28,9 @@ export function A11yToolbar() {
     resetTextScale,
     theme,
     setTheme,
+    language,
+    setLanguage,
+    t,
     isSpeaking,
     stopSpeech,
     speak,
@@ -177,6 +182,54 @@ export function A11yToolbar() {
                   title="Restablecer letra al 125%"
                 >
                   <RotateCcw className="w-4 h-4" aria-hidden="true" />
+                </button>
+              </div>
+
+              {/* Language Selector (ES, EN, PA) */}
+              <div
+                role="group"
+                aria-label="Selector de idioma / Language selector"
+                className="flex items-center rounded-lg p-1 bg-clearly-birch-light dark:bg-[#252525] border border-clearly-birch dark:border-[#3A3A3A]"
+              >
+                <button
+                  type="button"
+                  onClick={() => setLanguage("es")}
+                  aria-pressed={language === "es"}
+                  aria-label="Cambiar idioma a Español"
+                  className={`px-2 py-1 text-xs font-bold rounded-md transition-all ${
+                    language === "es"
+                      ? "bg-clearly-baltic text-white shadow-sm"
+                      : "text-clearly-obsidian dark:text-gray-200 hover:bg-white/50"
+                  }`}
+                >
+                  ES
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLanguage("en")}
+                  aria-pressed={language === "en"}
+                  aria-label="Switch language to English"
+                  className={`px-2 py-1 text-xs font-bold rounded-md transition-all ${
+                    language === "en"
+                      ? "bg-clearly-baltic text-white shadow-sm"
+                      : "text-clearly-obsidian dark:text-gray-200 hover:bg-white/50"
+                  }`}
+                >
+                  EN
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLanguage("pa")}
+                  aria-pressed={language === "pa"}
+                  aria-label="ਬੋਲੀ ਪੰਜਾਬੀ ਵਿੱਚ ਬਦਲੋ (Punjabi)"
+                  className={`px-2 py-1 text-xs font-bold rounded-md transition-all ${
+                    language === "pa"
+                      ? "bg-clearly-baltic text-white shadow-sm"
+                      : "text-clearly-obsidian dark:text-gray-200 hover:bg-white/50"
+                  }`}
+                  title="ਪੰਜਾਬੀ (Punjabi)"
+                >
+                  ਪੰ
                 </button>
               </div>
 

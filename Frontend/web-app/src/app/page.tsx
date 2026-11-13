@@ -7,7 +7,10 @@ import { TutorStatusBanner } from "../components/tutor/TutorStatusBanner";
 import { TutorHubDashboard } from "../components/tutor/TutorHubDashboard";
 import { DocumentUploader } from "../components/documents/DocumentUploader";
 import { ThreeLayerDocumentView } from "../components/documents/ThreeLayerDocumentView";
-import { MadeClearEventsShowcase } from "../components/events/MadeClearEventsShowcase";
+import { MadeClearCommunityHub } from "../components/events/MadeClearCommunityHub";
+import { AccessibilityStatementModal } from "../components/governance/AccessibilityStatementModal";
+import { ResponsibleAIModal } from "../components/governance/ResponsibleAIModal";
+import { AboutClearlyModal } from "../components/governance/AboutClearlyModal";
 import {
   FileText,
   ShieldCheck,
@@ -16,6 +19,8 @@ import {
   Lock,
   Sparkles,
   BookOpen,
+  Info,
+  Scale,
 } from "lucide-react";
 
 export default function HomePage() {
@@ -24,6 +29,11 @@ export default function HomePage() {
     SAMPLE_DOCUMENTS.n4_eviction
   );
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // Governance modals state
+  const [showA11yModal, setShowA11yModal] = useState(false);
+  const [showAIModal, setShowAIModal] = useState(false);
+  const [showAboutModal, setShowAboutModal] = useState(false);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
@@ -84,8 +94,8 @@ export default function HomePage() {
         <TutorHubDashboard />
       </div>
 
-      {/* Community Events Marketplace Showcase ("Made Clear" Format) */}
-      <MadeClearEventsShowcase />
+      {/* Community Events Marketplace Hub ("Made Clear" & Lovable App Capabilities) */}
+      <MadeClearCommunityHub />
 
       {/* Accessible Footer */}
       <footer
@@ -93,6 +103,42 @@ export default function HomePage() {
         aria-label="Pie de página informativo de CLEARLY"
         className="mt-16 pt-8 pb-12 border-t-2 border-clearly-birch dark:border-gray-800 text-sm text-gray-600 dark:text-gray-400"
       >
+        {/* Governance & Policy Quick Buttons */}
+        <div className="mb-8 p-4 rounded-2xl bg-gray-50 dark:bg-[#1E1E1E] border border-clearly-birch dark:border-[#383838] flex flex-wrap items-center justify-between gap-3">
+          <span className="text-xs font-bold uppercase tracking-wider text-clearly-obsidian dark:text-white flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 text-green-600" aria-hidden="true" />
+            Transparencia y Gobernanza CLEARLY
+          </span>
+          <div className="flex flex-wrap gap-2 text-xs">
+            <button
+              type="button"
+              onClick={() => setShowA11yModal(true)}
+              className="px-3 py-1.5 rounded-lg font-bold bg-white dark:bg-[#2A2A2A] text-clearly-baltic dark:text-blue-300 border border-clearly-birch dark:border-gray-700 hover:bg-gray-100 flex items-center gap-1.5"
+            >
+              <ShieldCheck className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>Accesibilidad WCAG 2.1 AAA</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowAIModal(true)}
+              className="px-3 py-1.5 rounded-lg font-bold bg-white dark:bg-[#2A2A2A] text-clearly-baltic dark:text-blue-300 border border-clearly-birch dark:border-gray-700 hover:bg-gray-100 flex items-center gap-1.5"
+            >
+              <Scale className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>IA Responsable y Ética</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowAboutModal(true)}
+              className="px-3 py-1.5 rounded-lg font-bold bg-white dark:bg-[#2A2A2A] text-clearly-baltic dark:text-blue-300 border border-clearly-birch dark:border-gray-700 hover:bg-gray-100 flex items-center gap-1.5"
+            >
+              <Info className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>Acerca de CLEARLY (GTA)</span>
+            </button>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <div className="flex items-center space-x-2">
@@ -107,8 +153,7 @@ export default function HomePage() {
               </span>
             </div>
             <p className="mt-2 text-xs leading-relaxed">
-              Iniciativa ciudadana de inclusión digital gerontológica fundada por{" "}
-              <strong>Navreet Pabla</strong> en Brampton, Ontario. Diseñada bajo la tipografía oficial{" "}
+              Iniciativa ciudadana de inclusión digital gerontológica en Brampton, Mississauga y el Gran Toronto (GTA). Diseñada bajo la tipografía oficial{" "}
               <strong>Atkinson Hyperlegible</strong> creada por el <em>Braille Institute</em>.
             </p>
           </div>
@@ -146,9 +191,23 @@ export default function HomePage() {
         </div>
 
         <div className="mt-8 pt-4 border-t border-gray-200 dark:border-gray-800 text-center text-xs text-gray-500">
-          © 2026 CLEARLY — Tu comunidad. Más clara. WCAG 2.1 AAA Compliant.
+          © 2026 CLEARLY — Tu comunidad. Más clara. WCAG 2.1 AAA Compliant. Trilingüe (Español • English • ਪੰਜਾਬੀ).
         </div>
       </footer>
+
+      {/* Modales de Transparencia y Gobernanza */}
+      <AccessibilityStatementModal
+        isOpen={showA11yModal}
+        onClose={() => setShowA11yModal(false)}
+      />
+      <ResponsibleAIModal
+        isOpen={showAIModal}
+        onClose={() => setShowAIModal(false)}
+      />
+      <AboutClearlyModal
+        isOpen={showAboutModal}
+        onClose={() => setShowAboutModal(false)}
+      />
     </div>
   );
 }
