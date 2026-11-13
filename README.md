@@ -179,6 +179,15 @@ npm test         # Pruebas automatizadas de accesibilidad y contraste WCAG AAA
   - [x] Modal interactivo de reserva CLEARLY Premium en Frontend Web (`ExpertBookingModal.tsx`) con delegación de pago a tutor familiar y sala de consulta accesible (`LiveKitVideoPreview.tsx`).
   - [x] Supervisión y liberación de custodia Escrow desde el panel de Tutor Hub (`TutorHubDashboard.tsx`).
   - [x] Pruebas automatizadas exhaustivas: 48 tests backend y 18 tests frontend (100% aprobadas).
+- [x] **Sprint 5: Integración Comunitaria Lovable, Trilingüismo & Marketplace GTA**
+  - [x] Buscador conversacional en lenguaje natural *Ask CLEARLY* con chips de intención rápida y explicaciones *Why this event*.
+  - [x] Selector dual de visualización de eventos: Modo Simple vs Modo CLEARLY con las 6 preguntas canónicas de lenguaje claro.
+  - [x] Guía práctica interactiva de asistencia (`AttendGuideModal`) con generador dinámico de calendarios RFC 5545 (`.ics`) y enlace directo a Google Maps en modo transporte público (*travelmode=transit*).
+  - [x] Sistema de filtros cívicos avanzados: selector de los 9 municipios del Gran Toronto (GTA), filtro por costo (Gratis/Pago) y cálculo de proximidad por código postal (Haversine).
+  - [x] Soporte nativo trilingüe completo: **Español (`es`)**, **Inglés (`en`)** y **Punyabí (`pa` - ਪੰਜਾਬੀ)** con selector de idioma en barra accesible.
+  - [x] Pestañas de persistencia en `localStorage`: *Mis Eventos* (Going) y *Guardados* (Bookmarks).
+  - [x] Modales de gobernanza ciudadana: Declaración de Accesibilidad (WCAG 2.1 AAA), IA Responsable y Manifiesto CLEARLY.
+  - [x] Pruebas automatizadas actualizadas: 23 tests frontend con 100% de aprobación.
 
 ---
 
