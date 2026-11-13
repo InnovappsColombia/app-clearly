@@ -156,3 +156,29 @@ services:
       - backend-api
     networks:
       - clearly-network
+
+  # ----------------------------------------------------------------------------
+  # 7. GATEWAY DE WHATSAPP AUTOHOSPEDADO (Evolution API v2) — [Sprint 3]
+  # ----------------------------------------------------------------------------
+  evolution-api:
+    image: atendai/evolution-api:v2.0.0
+    container_name: clearly-evolution-api
+    restart: unless-stopped
+    environment:
+      SERVER_PORT: 8080
+      SERVER_URL: http://localhost:8080
+      AUTHENTICATION_API_KEY: ${EVOLUTION_API_KEY:-clearly_evolution_api_key_2026}
+      DATABASE_ENABLED: "false"
+      CACHE_REDIS_ENABLED: "true"
+      CACHE_REDIS_URI: redis://redis:6379/1
+      WEBHOOK_GLOBAL_ENABLED: "true"
+      WEBHOOK_GLOBAL_URL: http://backend-api:8000/api/v1/webhooks/whatsapp
+      WEBHOOK_GLOBAL_WEBHOOK_BY_EVENTS: "true"
+      WEBHOOK_EVENTS_MESSAGES_UPSERT: "true"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+      - backend-api
+    networks:
+      - clearly-network

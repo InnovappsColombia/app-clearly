@@ -163,10 +163,14 @@ npm test         # Pruebas automatizadas de accesibilidad y contraste WCAG AAA
   - [x] Lector TTS en navegador (Web Speech API) con control de velocidad (0.75x a 1.25x).
   - [x] Banner protector de enlace familiar (*Modo Tutor*) y Marketplace *Made Clear*.
   - [x] Suite de pruebas automatizadas de ratios de contraste y contratos A11y.
-- [ ] **Sprint 3: Canal WhatsApp y Tutor Hub**
-  - [ ] Webhook de mensajería con Evolution API.
-  - [ ] Transcripción de audios con faster-whisper y síntesis con Piper TTS.
-  - [ ] Sincronización colaborativa de checklists en tiempo real.
+- [x] **Sprint 3: Canal WhatsApp (Evolution API) y Tutor Hub en Tiempo Real**
+  - [x] Webhook de mensajería con Evolution API v2 (`/api/v1/webhooks/whatsapp`) con rate limiting Token Bucket y protección anti-baneo Meta (FMEA FM-05).
+  - [x] Transcripción gerontológica de audios con faster-whisper (calibración VAD para pausas seniles FMEA FM-03) y síntesis ultrarrápida con Piper TTS (`< 150ms`).
+  - [x] Motor de Handshake efímero Titular-Tutor (Curve25519) con tokens atenuados PASETO v4 (`action=read_only`).
+  - [x] Protocolo de coacción silenciosa *Duress PIN* (FMEA FM-04) contra abuso patrimonial con cuarentena instantánea.
+  - [x] Sincronización colaborativa de checklists en tiempo real vía WebSockets (`/api/v1/ws/tutors/{senior_id}`).
+  - [x] Panel interactivo Tutor Hub en Frontend Web (Next.js 14) accesible WCAG 2.1 AAA con selector de roles y checklist bidireccional.
+  - [x] Suite de pruebas automatizadas: 41 tests backend y 11 tests frontend con 100% de aprobación.
 
 ---
 
