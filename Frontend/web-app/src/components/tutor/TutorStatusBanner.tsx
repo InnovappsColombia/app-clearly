@@ -57,8 +57,17 @@ export function TutorStatusBanner() {
           </div>
         </div>
 
-        {/* Action Button: Listen to Tutor Status */}
-        <div className="flex items-center gap-2 w-full md:w-auto justify-end">
+        {/* Action Buttons: Tutor Hub & Listen to Status */}
+        <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-end">
+          <a
+            href="#tutor-hub"
+            className="px-3.5 py-2 text-xs sm:text-sm font-bold rounded-lg flex items-center gap-2 text-white bg-clearly-baltic dark:bg-clearly-royal hover:opacity-90 transition-opacity shadow-sm"
+            aria-label="Ir al panel de Tutor Hub en tiempo real"
+          >
+            <Users className="w-4 h-4" aria-hidden="true" />
+            <span>Abrir Tutor Hub</span>
+          </a>
+
           <button
             type="button"
             onClick={handleSpeakTutor}

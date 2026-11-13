@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { DocumentAnalysisResult } from "../types/document";
 import { SAMPLE_DOCUMENTS } from "../data/sampleDocuments";
 import { TutorStatusBanner } from "../components/tutor/TutorStatusBanner";
+import { TutorHubDashboard } from "../components/tutor/TutorHubDashboard";
 import { DocumentUploader } from "../components/documents/DocumentUploader";
 import { ThreeLayerDocumentView } from "../components/documents/ThreeLayerDocumentView";
 import { MadeClearEventsShowcase } from "../components/events/MadeClearEventsShowcase";
@@ -77,6 +78,11 @@ export default function HomePage() {
 
       {/* Three-Layer Document View (Core Hero Feature) */}
       {activeDocument && <ThreeLayerDocumentView document={activeDocument} />}
+
+      {/* Tutor Hub en Tiempo Real (Sprint 3 Hero Feature) */}
+      <div id="tutor-hub" className="scroll-mt-24">
+        <TutorHubDashboard />
+      </div>
 
       {/* Community Events Marketplace Showcase ("Made Clear" Format) */}
       <MadeClearEventsShowcase />
