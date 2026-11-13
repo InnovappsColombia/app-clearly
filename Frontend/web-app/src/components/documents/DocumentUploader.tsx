@@ -11,8 +11,7 @@ import {
   CheckCircle2,
   AlertTriangle,
   Loader2,
-  Sparkles,
-  Info,
+  Scale,
 } from "lucide-react";
 
 interface DocumentUploaderProps {
@@ -64,7 +63,6 @@ export function DocumentUploader({
     setErrorMessage(null);
     setSelectedFileName(file.name);
 
-    // Validate size (25MB)
     if (file.size > 25 * 1024 * 1024) {
       const err = "El archivo supera el tamaño máximo permitido de 25MB.";
       setErrorMessage(err);
@@ -78,7 +76,6 @@ export function DocumentUploader({
     );
 
     try {
-      // Attempt upload to FastAPI Backend
       const formData = new FormData();
       formData.append("file", file);
       formData.append("target_language", targetLanguage);
@@ -92,18 +89,15 @@ export function DocumentUploader({
       if (response.ok) {
         const result: DocumentAnalysisResult = await response.json();
         onDocumentProcessed(result);
-        announce("Documento analizado con éxito. Mostrando resultado en 3 capas accesibles.");
+        announce("Documento analizado con éxito en 3 capas.");
       } else {
-        // Fallback for standalone demo if backend container is offline
         throw new Error(`Servidor respondió con código ${response.status}`);
       }
     } catch {
-      // Graceful fallback to rich local sample analysis
       announce(
-        "Conexión con el servidor backend no disponible. Mostrando simulación accesible con datos de prueba.",
+        "Conexión directa no disponible. Cargando análisis local soberano de demostración.",
         "polite"
       );
-      // Pick appropriate sample based on filename
       let fallbackDoc = SAMPLE_DOCUMENTS.n4_eviction;
       if (file.name.toLowerCase().includes("ircc") || file.name.toLowerCase().includes("inmigra")) {
         fallbackDoc = SAMPLE_DOCUMENTS.ircc_letter;
@@ -117,7 +111,7 @@ export function DocumentUploader({
           id: `doc-${Date.now()}`,
           document_type: `Carta procesada: ${file.name}`,
         });
-      }, 1000);
+      }, 800);
     } finally {
       setIsProcessing(false);
     }
@@ -127,33 +121,32 @@ export function DocumentUploader({
     const doc = SAMPLE_DOCUMENTS[sampleKey];
     setSelectedFileName(doc.document_type);
     setIsProcessing(true);
-    announce(`Cargando documento de muestra: ${doc.document_type}`);
+    announce(`Cargando caso de muestra: ${doc.document_type}`);
 
     setTimeout(() => {
       onDocumentProcessed(doc);
       setIsProcessing(false);
-      announce("Documento cargado correctamente en pantalla.");
-    }, 400);
+      announce("Documento cargado correctamente.");
+    }, 300);
   };
 
   return (
     <section
       role="region"
       aria-labelledby="uploader-title"
-      className="p-6 sm:p-8 rounded-3xl border-2 transition-all duration-200 bg-white dark:bg-[#1A1A1A] border-clearly-birch dark:border-[#383838] shadow-md mb-8"
+      className="p-6 sm:p-8 bg-white dark:bg-[#1A1A1A] border-2 border-clearly-obsidian dark:border-white shadow-[4px_4px_0_#1B1B1B] dark:shadow-[4px_4px_0_#FFFF00] mb-8"
     >
-      <div className="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-clearly-birch/60 dark:border-gray-800 gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b-2 border-clearly-obsidian dark:border-white gap-4">
         <div>
           <h2
             id="uploader-title"
-            className="text-2xl sm:text-3xl font-bold tracking-tight text-clearly-obsidian dark:text-white flex items-center gap-3"
+            className="text-2xl sm:text-3xl font-black tracking-tight text-clearly-obsidian dark:text-white flex items-center gap-3"
           >
-            <UploadCloud className="w-8 h-8 text-clearly-royal" aria-hidden="true" />
-            Subir Carta o Aviso Gubernamental
+            <UploadCloud className="w-7 h-7 text-clearly-baltic dark:text-yellow-400 stroke-[2.5]" aria-hidden="true" />
+            <span>Ingreso y Desglose Documental</span>
           </h2>
-          <p className="mt-1 text-sm sm:text-base text-gray-600 dark:text-gray-300">
-            Escanea o sube cartas de inmigración, avisos de renta, citas médicas o contratos. CLEARLY
-            los explica en 3 pasos sencillos.
+          <p className="mt-1 text-sm sm:text-base font-medium text-gray-700 dark:text-gray-300">
+            Escanea o deposita notificaciones oficiales de Ontario, cartas de inmigración o reclamos LTB.
           </p>
         </div>
 
@@ -161,15 +154,15 @@ export function DocumentUploader({
         <div className="flex items-center gap-2">
           <label
             htmlFor="target-language-select"
-            className="text-xs sm:text-sm font-bold text-clearly-obsidian dark:text-gray-300"
+            className="label-technical text-clearly-obsidian dark:text-white"
           >
-            Idioma de traducción:
+            Idioma de Salida:
           </label>
           <select
             id="target-language-select"
             value={targetLanguage}
             onChange={(e) => setTargetLanguage(e.target.value)}
-            className="px-3 py-2 text-sm font-bold rounded-lg border-2 bg-white dark:bg-[#252525] border-clearly-birch dark:border-gray-600 text-clearly-obsidian dark:text-white"
+            className="px-3 py-2 text-sm font-bold border-2 border-clearly-obsidian dark:border-white bg-white dark:bg-black text-clearly-obsidian dark:text-white"
           >
             <option value="es">Español (Lenguaje Sencillo)</option>
             <option value="en">English (Plain Language)</option>
@@ -178,16 +171,16 @@ export function DocumentUploader({
         </div>
       </div>
 
-      {/* Upload Drag & Drop Box */}
+      {/* Upload Drag & Drop Depository */}
       <div
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
         onDrop={handleDrop}
-        className={`mt-6 p-8 rounded-2xl border-3 border-dashed text-center transition-all ${
+        className={`mt-6 p-8 border-2 border-dashed text-center transition-colors ${
           dragActive
-            ? "border-clearly-royal bg-blue-50/70 dark:bg-blue-950/40"
-            : "border-clearly-birch dark:border-gray-700 bg-clearly-birch-light/50 dark:bg-[#222222]"
+            ? "border-clearly-baltic bg-blue-50 dark:bg-blue-950/40"
+            : "border-clearly-obsidian dark:border-white bg-gray-50 dark:bg-[#121212]"
         }`}
       >
         <input
@@ -218,38 +211,37 @@ export function DocumentUploader({
             className="flex flex-col items-center justify-center py-6"
           >
             <Loader2
-              className="w-12 h-12 text-clearly-royal animate-spin mb-3"
+              className="w-12 h-12 text-clearly-baltic dark:text-yellow-400 animate-spin mb-3 stroke-[2.5]"
               aria-hidden="true"
             />
-            <p className="text-lg font-bold text-clearly-obsidian dark:text-white">
-              Analizando documento de forma segura...
+            <p className="text-xl font-bold text-clearly-obsidian dark:text-white">
+              Analizando documento en infraestructura local soberana...
             </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              Extracción OCR • Cálculo de plazos • Auditoría Fernández-Huerta (FH ≥ 80)
+            <p className="text-sm font-semibold text-gray-600 dark:text-gray-300 mt-1">
+              Doble pase OCR • Extracción determinista de plazos • Verificación Fernández-Huerta
             </p>
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center">
             <div
-              className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 bg-white dark:bg-[#2C2C2C] shadow-sm text-clearly-royal"
+              className="w-16 h-16 border-2 border-clearly-obsidian dark:border-white flex items-center justify-center mb-4 bg-white dark:bg-black text-clearly-obsidian dark:text-white"
               aria-hidden="true"
             >
-              <FileText className="w-8 h-8" />
+              <FileText className="w-8 h-8 stroke-[2]" />
             </div>
 
-            <p className="text-lg font-bold text-clearly-obsidian dark:text-white">
-              Arrastra tu documento aquí o selecciónalo de tu equipo
+            <p className="text-xl font-bold text-clearly-obsidian dark:text-white">
+              Arrastra tu carta aquí o selecciona un archivo de tu equipo
             </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 max-w-md">
-              Acepta archivos PDF, fotos PNG, JPEG o texto plano (máx. 25MB). Tus datos nunca salen
-              a servidores de terceros.
+            <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mt-1 max-w-lg">
+              Soporta PDF, imágenes JPEG/PNG o texto. Tamaño máximo: 25MB. Procesamiento con privacidad estricta PIPEDA.
             </p>
 
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="px-6 py-3 font-bold text-sm sm:text-base text-white rounded-xl shadow-md bg-clearly-royal hover:bg-clearly-royal-hover flex items-center gap-2 transition-transform active:scale-95"
+                className="btn-tactile btn-primary flex-row items-center gap-2 px-6 py-3 font-bold text-sm w-auto"
               >
                 <UploadCloud className="w-5 h-5" aria-hidden="true" />
                 <span>Examinar Archivos</span>
@@ -258,9 +250,9 @@ export function DocumentUploader({
               <button
                 type="button"
                 onClick={() => cameraInputRef.current?.click()}
-                className="px-6 py-3 font-bold text-sm sm:text-base text-clearly-obsidian dark:text-white bg-white dark:bg-[#2C2C2C] hover:bg-gray-100 dark:hover:bg-[#353535] rounded-xl border-2 border-clearly-birch dark:border-gray-600 shadow-sm flex items-center gap-2 transition-transform active:scale-95"
+                className="btn-tactile flex-row items-center gap-2 px-6 py-3 font-bold text-sm w-auto"
               >
-                <Camera className="w-5 h-5 text-clearly-baltic dark:text-blue-400" aria-hidden="true" />
+                <Camera className="w-5 h-5 text-clearly-baltic dark:text-yellow-400" aria-hidden="true" />
                 <span>Tomar Foto con Cámara</span>
               </button>
             </div>
@@ -272,77 +264,77 @@ export function DocumentUploader({
       {errorMessage && (
         <div
           role="alert"
-          className="mt-4 p-4 rounded-xl flex items-center gap-3 bg-red-50 text-clearly-danger dark:bg-red-950/60 dark:text-red-300 border border-red-200 dark:border-red-900"
+          className="mt-4 p-4 border-2 border-red-700 bg-red-50 text-clearly-danger dark:bg-red-950/60 dark:text-red-300 flex items-center gap-3 font-bold"
         >
           <AlertTriangle className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
-          <p className="text-sm font-bold">{errorMessage}</p>
+          <p>{errorMessage}</p>
         </div>
       )}
 
-      {/* Gold Standard 1-Click Samples for Instant Testing */}
-      <div className="mt-6 pt-5 border-t border-clearly-birch/60 dark:border-gray-800">
+      {/* Casos reales de prueba inmediata */}
+      <div className="mt-8 pt-5 border-t-2 border-clearly-obsidian dark:border-white">
         <div className="flex items-center gap-2 mb-3">
-          <Sparkles className="w-4 h-4 text-amber-500" aria-hidden="true" />
-          <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-clearly-baltic dark:text-blue-400">
-            ¿No tienes un archivo a mano? Prueba con casos reales de muestra (1 Clic):
+          <Scale className="w-4 h-4 text-clearly-baltic dark:text-yellow-400" aria-hidden="true" />
+          <span className="label-technical text-clearly-obsidian dark:text-white">
+            O selecciona un caso real estandarizado para inspección inmediata (1 Clic):
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <button
             type="button"
             onClick={() => handleSelectSample("n4_eviction")}
-            className="p-3 text-left rounded-xl border-2 transition-all bg-white dark:bg-[#222222] border-clearly-birch dark:border-gray-700 hover:border-clearly-royal dark:hover:border-clearly-royal shadow-sm"
+            className="p-4 text-left border-2 border-clearly-obsidian dark:border-white bg-white dark:bg-[#121212] hover:bg-gray-50 dark:hover:bg-[#1E1E1E] shadow-[2px_2px_0_#1B1B1B] dark:shadow-[2px_2px_0_#FFFF00] transition-transform active:translate-y-0.5"
           >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-red-600 dark:text-red-400 uppercase tracking-wider">
-                Plazo Urgente (14d)
+              <span className="label-technical text-red-600 dark:text-red-400">
+                Plazo Fatal (14d)
               </span>
-              <span className="text-xs text-gray-400">LTB Ontario</span>
+              <span className="text-xs font-bold text-gray-500">LTB Ontario</span>
             </div>
-            <p className="text-sm font-bold text-clearly-obsidian dark:text-white mt-1 line-clamp-1">
+            <p className="text-base font-black text-clearly-obsidian dark:text-white mt-1">
               Formulario N4 Desalojo Renta
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-              Aviso por atraso de mensualidad
+            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+              Aviso oficial por atraso en mensualidad
             </p>
           </button>
 
           <button
             type="button"
             onClick={() => handleSelectSample("ircc_letter")}
-            className="p-3 text-left rounded-xl border-2 transition-all bg-white dark:bg-[#222222] border-clearly-birch dark:border-gray-700 hover:border-clearly-royal dark:hover:border-clearly-royal shadow-sm"
+            className="p-4 text-left border-2 border-clearly-obsidian dark:border-white bg-white dark:bg-[#121212] hover:bg-gray-50 dark:hover:bg-[#1E1E1E] shadow-[2px_2px_0_#1B1B1B] dark:shadow-[2px_2px_0_#FFFF00] transition-transform active:translate-y-0.5"
           >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">
+              <span className="label-technical text-amber-600 dark:text-amber-400">
                 Plazo Medio (30d)
               </span>
-              <span className="text-xs text-gray-400">IRCC Canadá</span>
+              <span className="text-xs font-bold text-gray-500">IRCC Canadá</span>
             </div>
-            <p className="text-sm font-bold text-clearly-obsidian dark:text-white mt-1 line-clamp-1">
-              Carta Evidencia Adicional
+            <p className="text-base font-black text-clearly-obsidian dark:text-white mt-1">
+              Requerimiento de Evidencia
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-              Trámite de residencia familiar
+            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+              Trámite de residencia y patrocinio familiar
             </p>
           </button>
 
           <button
             type="button"
             onClick={() => handleSelectSample("cra_gis_pension")}
-            className="p-3 text-left rounded-xl border-2 transition-all bg-white dark:bg-[#222222] border-clearly-birch dark:border-gray-700 hover:border-clearly-royal dark:hover:border-clearly-royal shadow-sm"
+            className="p-4 text-left border-2 border-clearly-obsidian dark:border-white bg-white dark:bg-[#121212] hover:bg-gray-50 dark:hover:bg-[#1E1E1E] shadow-[2px_2px_0_#1B1B1B] dark:shadow-[2px_2px_0_#FFFF00] transition-transform active:translate-y-0.5"
           >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-green-600 dark:text-green-400 uppercase tracking-wider">
+              <span className="label-technical text-green-700 dark:text-green-400">
                 Informativo
               </span>
-              <span className="text-xs text-gray-400">Service Canada</span>
+              <span className="text-xs font-bold text-gray-500">Service Canada</span>
             </div>
-            <p className="text-sm font-bold text-clearly-obsidian dark:text-white mt-1 line-clamp-1">
+            <p className="text-base font-black text-clearly-obsidian dark:text-white mt-1">
               Renovación Suplemento GIS
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-              Pensión y revisión de ingresos
+            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+              Pensión OAS y revisión de ingresos CRA
             </p>
           </button>
         </div>
@@ -350,4 +342,3 @@ export function DocumentUploader({
     </section>
   );
 }
-

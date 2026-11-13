@@ -1,12 +1,63 @@
-@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ==========================================================================
+   CLEARLY — SISTEMA DE DISEÑO CÍVICO SOBERANO (SWISS ANTI-SLOP SPEC)
+   ========================================================================== */
+
 :root {
-  --font-atkinson: 'Atkinson Hyperlegible', sans-serif;
-  --bg-primary: #FAFAFA;
+  --font-atkinson: 'Atkinson Hyperlegible', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Escala tipográfica fluida basada en unidades de contenedor cqi/rem (Minor Third 1.200) */
+  --step--1: clamp(0.875rem, 0.84rem + 0.17cqi, 0.95rem);   /* Legal / Metadatos */
+  --step-0:  clamp(1.125rem, 1.08rem + 0.22cqi, 1.25rem);    /* Cuerpo de lectura */
+  --step-1:  clamp(1.35rem,  1.28rem + 0.35cqi, 1.50rem);    /* Subtítulos / H3 */
+  --step-2:  clamp(1.62rem,  1.51rem + 0.55cqi, 1.88rem);    /* Encabezados / H2 */
+  --step-3:  clamp(1.94rem,  1.78rem + 0.82cqi, 2.35rem);    /* Títulos / H1 */
+  --step-4:  clamp(2.33rem,  2.10rem + 1.18cqi, 3.00rem);    /* Hero Display */
+
+  /* Ritmo vertical y alturas de línea ergonómicas */
+  --lh-display: 1.15;
+  --lh-heading: 1.25;
+  --lh-body:    1.65;
+
+  /* Espaciado modular lógico de 4px / 8px */
+  --space-3xs: 0.25rem;  /* 4px */
+  --space-2xs: 0.50rem;  /* 8px */
+  --space-xs:  0.75rem;  /* 12px */
+  --space-s:   1.00rem;  /* 16px */
+  --space-m:   1.50rem;  /* 24px */
+  --space-l:   2.00rem;  /* 32px */
+  --space-xl:  3.00rem;  /* 48px */
+  --space-2xl: 4.50rem;  /* 72px */
+
+  /* Límites de lectura ergonómica */
+  --measure-narrow:  45ch;
+  --measure-optimal: 62ch;
+  --measure-wide:    72ch;
+
+  /* Curva de movimiento mecánico amortiguado */
+  --ease-mechanical: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* --- 1. PRIMITIVOS EN OKLCH --- */
+  --ink-950:         oklch(0.14 0.012 85);   /* Carbón de imprenta */
+  --ink-800:         oklch(0.26 0.010 85);   /* Tinta secundaria */
+  --paper-100:       oklch(0.96 0.006 85);   /* Papel caliza */
+  --paper-50:        oklch(0.985 0.003 85);  /* Sustrato alabastro puro */
+
+  --civic-prussian:  oklch(0.40 0.160 255);  /* Azul de registro municipal */
+  --civic-focus:     oklch(0.55 0.220 250);  /* Anillo de foco */
+  --alarm-vermilion: oklch(0.48 0.220 28);   /* Bermellón judicial */
+  --caution-amber:   oklch(0.74 0.180 72);   /* Ámbar de inspección */
+  --signal-yellow:   oklch(0.95 0.200 105);  /* Amarillo de señal vial */
+  --signal-cyan:     oklch(0.85 0.200 190);  /* Cyan eléctrico */
+
+  /* Legacy & test backward compatibility */
+  --bg-primary: #F7F5F0;
   --text-primary: #1B1B1B;
   --card-bg: #FFFFFF;
   --card-border: #D8D6CE;
@@ -20,15 +71,30 @@ html {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Accessibility Focus Visible Rings - WCAG 2.1 AAA */
-*:focus-visible {
-  outline: 4px solid #4277FF !important;
-  outline-offset: 3px !important;
-  border-radius: 4px;
-}
+/* ==========================================================================
+   TEMAS PERCEPTUALES (LIGHT, DARK, HIGH-CONTRAST)
+   ========================================================================== */
 
-/* Light Theme (Accessible Default) */
-.theme-light {
+/* Tema Claro (Sustrato Editorial / Papel Caliza) */
+.theme-light, [data-theme="light"] {
+  --canvas-bg:           var(--paper-50);
+  --surface-raised:      oklch(1.00 0.000 000);
+  --surface-inset:       var(--paper-100);
+  
+  --line-structural:     var(--ink-950);
+  --line-subtle:         oklch(0.85 0.008 85);
+  
+  --text-main:           var(--ink-950);
+  --text-muted:          var(--ink-800);
+  
+  --action-bg:           var(--civic-prussian);
+  --action-fg:           oklch(1.00 0.000 000);
+  --action-focus:        var(--civic-focus);
+  
+  --alert-urgent-bg:     oklch(0.94 0.040 28);
+  --alert-urgent-fg:     var(--alarm-vermilion);
+  --alert-urgent-line:   var(--alarm-vermilion);
+
   --bg-primary: #F7F5F0;
   --text-primary: #1B1B1B;
   --card-bg: #FFFFFF;
@@ -37,8 +103,26 @@ html {
   color: var(--text-primary);
 }
 
-/* Dark Theme (Obsidian Black) */
-.theme-dark {
+/* Tema Oscuro (Obsidiana Carbón sin tinte azulado) */
+.theme-dark, [data-theme="dark"] {
+  --canvas-bg:           oklch(0.10 0.005 85);
+  --surface-raised:      oklch(0.16 0.008 85);
+  --surface-inset:       oklch(0.08 0.004 85);
+
+  --line-structural:     oklch(0.55 0.008 85);
+  --line-subtle:         oklch(0.24 0.006 85);
+
+  --text-main:           oklch(0.97 0.004 85);
+  --text-muted:          oklch(0.80 0.006 85);
+
+  --action-bg:           oklch(0.72 0.150 250);
+  --action-fg:           oklch(0.10 0.005 85);
+  --action-focus:        var(--signal-yellow);
+
+  --alert-urgent-bg:     oklch(0.22 0.070 28);
+  --alert-urgent-fg:     oklch(0.88 0.160 28);
+  --alert-urgent-line:   oklch(0.88 0.160 28);
+
   --bg-primary: #121212;
   --text-primary: #F3F4F6;
   --card-bg: #1B1B1B;
@@ -47,12 +131,26 @@ html {
   color: var(--text-primary);
 }
 
-.theme-dark *:focus-visible {
-  outline: 4px solid #FFFF00 !important;
-}
+/* Tema Ultra Alto Contraste (WCAG 2.1 AAA - Amarillo y Negro Vial) */
+.theme-high-contrast, [data-theme="high-contrast"] {
+  --canvas-bg:           #000000 !important;
+  --surface-raised:      #000000 !important;
+  --surface-inset:       #000000 !important;
 
-/* Ultra High Contrast Theme (Yellow & Black AAA) */
-.theme-high-contrast {
+  --line-structural:     #FFFF00 !important;
+  --line-subtle:         #FFFFFF !important;
+
+  --text-main:           #FFFF00 !important;
+  --text-muted:          #FFFFFF !important;
+
+  --action-bg:           #FFFF00 !important;
+  --action-fg:           #000000 !important;
+  --action-focus:        #00FFFF !important;
+
+  --alert-urgent-bg:     #000000 !important;
+  --alert-urgent-fg:     #FF5555 !important;
+  --alert-urgent-line:   #FF5555 !important;
+
   --bg-primary: #000000;
   --text-primary: #FFFF00;
   --card-bg: #000000;
@@ -70,33 +168,375 @@ html {
   color: #FFFF00 !important;
 }
 
-.theme-high-contrast *:focus-visible {
-  outline: 5px solid #00FFFF !important;
+/* ==========================================================================
+   FOCO VISUAL DUAL-BAND (WCAG 2.2 AAA - IMPOSIBLE DE PERDER DE VISTA)
+   ========================================================================== */
+
+*:focus-visible {
+  outline: 3px solid #4277FF !important;
   outline-offset: 4px !important;
+  box-shadow: 0 0 0 8px var(--canvas-bg, #F7F5F0) !important;
+  border-radius: 2px !important;
 }
 
-.theme-high-contrast .badge-urgency-critical {
-  background-color: #000000 !important;
-  color: #FF5555 !important;
-  border: 2px solid #FF5555 !important;
+.theme-dark *:focus-visible {
+  outline: 3px solid #FFFF00 !important;
+  box-shadow: 0 0 0 8px #121212 !important;
 }
 
-.theme-high-contrast .badge-urgency-high {
-  background-color: #000000 !important;
-  color: #FFAA00 !important;
-  border: 2px solid #FFAA00 !important;
+.theme-high-contrast *:focus-visible {
+  outline: 4px solid #00FFFF !important;
+  outline-offset: 4px !important;
+  box-shadow: 0 0 0 8px #000000 !important;
 }
 
-.theme-high-contrast .badge-urgency-medium {
-  background-color: #000000 !important;
-  color: #FFFF00 !important;
-  border: 2px solid #FFFF00 !important;
+/* ==========================================================================
+   MICRO-TIPOGRAFÍA Y CIFRAS TABULARES
+   ========================================================================== */
+
+.numeric-ledger,
+.data-critical-value {
+  font-variant-numeric: tabular-nums lining-nums slashed-zero;
+  font-feature-settings: "tnum" 1, "lnum" 1, "zero" 1;
 }
 
-.theme-high-contrast .badge-urgency-low {
-  background-color: #000000 !important;
-  color: #00FF66 !important;
-  border: 2px solid #00FF66 !important;
+.label-technical {
+  font-size: var(--step--1);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.065em;
+  line-height: 1.2;
+}
+
+/* ==========================================================================
+   ARQUITECTURA DE RETÍCULA MODULAR (@container)
+   ========================================================================== */
+
+.clearly-viewport-canvas {
+  container-type: inline-size;
+  container-name: clearly-workspace;
+  inline-size: 100%;
+  max-inline-size: 88rem;
+  margin-inline: auto;
+  padding-inline: var(--space-s);
+  padding-block: var(--space-m);
+}
+
+.civic-split-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-l);
+  align-items: start;
+}
+
+@container clearly-workspace (min-width: 64rem) {
+  .civic-split-grid {
+    grid-template-columns: minmax(0, 1.62fr) minmax(22rem, 1fr);
+    gap: var(--space-xl);
+  }
+}
+
+/* ==========================================================================
+   COMPONENTES ARTESANALES (ANTI-SLOP)
+   ========================================================================== */
+
+/* --- Componente A: Tablero de Alerta / Fecha Crítica --- */
+.crit-alert-block {
+  background-color: var(--surface-raised, #FFFFFF);
+  border: 2px solid var(--alert-urgent-line, #C5192D);
+  box-shadow: 4px 4px 0 var(--alert-urgent-line, #C5192D);
+  margin-block-end: var(--space-l);
+}
+
+.theme-high-contrast .crit-alert-block {
+  border-color: #FF5555 !important;
+  box-shadow: 4px 4px 0 #FF5555 !important;
+}
+
+.crit-alert-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-m);
+  background-color: var(--alert-urgent-bg, #FFEBEE);
+  border-block-end: 2px solid var(--alert-urgent-line, #C5192D);
+}
+
+.crit-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  color: var(--alert-urgent-fg, #C5192D);
+}
+
+.crit-indicator {
+  inline-size: 0.65rem;
+  block-size: 0.65rem;
+  background-color: var(--alert-urgent-fg, #C5192D);
+  border-radius: 50%;
+}
+
+.crit-origin {
+  font-size: var(--step--1);
+  font-weight: 700;
+  color: var(--text-muted, #555555);
+}
+
+.crit-alert-body {
+  padding: var(--space-m);
+}
+
+.crit-doc-title {
+  color: var(--text-main, #1B1B1B);
+  font-size: var(--step-3);
+  font-weight: 700;
+  line-height: var(--lh-heading);
+  letter-spacing: -0.025em;
+  margin-block-end: var(--space-m);
+}
+
+.crit-metrics-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: var(--space-xs);
+  margin-block-end: var(--space-m);
+  background-color: var(--surface-inset, #F7F5F0);
+  border: 1px solid var(--line-structural, #1B1B1B);
+  padding: var(--space-xs);
+}
+
+.crit-metric-cell {
+  padding: var(--space-s);
+  background-color: var(--surface-raised, #FFFFFF);
+  border: 1px solid var(--line-subtle, #D8D6CE);
+  display: flex;
+  flex-direction: column;
+}
+
+.crit-metric-cell.highlight {
+  border-inline-start: 4px solid var(--alert-urgent-line, #C5192D);
+}
+
+.crit-countdown {
+  font-size: clamp(2.5rem, 5cqi, 3.5rem);
+  font-weight: 700;
+  line-height: 1.0;
+  color: var(--alert-urgent-fg, #C5192D);
+  margin-block: var(--space-3xs);
+}
+
+.crit-date, .crit-amount {
+  font-size: var(--step-2);
+  font-weight: 700;
+  color: var(--text-main, #1B1B1B);
+  margin-block: var(--space-3xs);
+}
+
+.crit-sublabel {
+  font-size: var(--step--1);
+  color: var(--text-muted, #555555);
+}
+
+.crit-legal-guarantee {
+  border-block-start: 1px solid var(--line-subtle, #D8D6CE);
+  padding-block-start: var(--space-s);
+  font-size: var(--step-0);
+  color: var(--text-main, #1B1B1B);
+  line-height: var(--lh-body);
+}
+
+/* --- Componente B: Matriz de Cotejo Documental (Subgrid) --- */
+.comparative-ledger {
+  background-color: var(--surface-raised, #FFFFFF);
+  border: 1px solid var(--line-structural, #1B1B1B);
+  margin-block-end: var(--space-xl);
+}
+
+.ledger-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  padding: var(--space-s) var(--space-m);
+  background-color: var(--surface-inset, #F7F5F0);
+  border-block-end: 1px solid var(--line-structural, #1B1B1B);
+}
+
+.ledger-table {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@container clearly-workspace (min-width: 50rem) {
+  .ledger-table {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .ledger-row {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: subgrid;
+    border-block-end: 1px solid var(--line-subtle, #D8D6CE);
+  }
+}
+
+.ledger-cell {
+  padding: var(--space-m);
+}
+
+.ledger-cell.original {
+  background-color: var(--surface-inset, #F7F5F0);
+  border-inline-end: 1px solid var(--line-subtle, #D8D6CE);
+  font-size: var(--step--1);
+  color: var(--text-muted, #555555);
+}
+
+.original-cite {
+  display: block;
+  font-family: inherit;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  margin-block-end: var(--space-2xs);
+  color: var(--text-muted, #555555);
+}
+
+.ledger-cell.simplified {
+  background-color: var(--surface-raised, #FFFFFF);
+  font-size: var(--step-0);
+  color: var(--text-main, #1B1B1B);
+}
+
+.action-highlight {
+  display: block;
+  font-size: var(--step-0);
+  font-weight: 700;
+  color: var(--text-main, #1B1B1B);
+  margin-block-end: var(--space-2xs);
+}
+
+/* --- Componente C: Botones Táctiles Físicos --- */
+.civic-actions-dock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  margin-block-start: var(--space-m);
+}
+
+@container clearly-workspace (min-width: 40rem) {
+  .civic-actions-dock {
+    flex-direction: row;
+  }
+}
+
+.btn-tactile {
+  min-block-size: 3.5rem;
+  inline-size: 100%;
+  padding-inline: var(--space-m);
+  padding-block: var(--space-xs);
+  border: 2px solid var(--line-structural, #1B1B1B);
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  cursor: pointer;
+  background-color: var(--surface-raised, #FFFFFF);
+  color: var(--text-main, #1B1B1B);
+  transform: translate(0, 0);
+  box-shadow: 3px 3px 0 var(--line-structural, #1B1B1B);
+  transition: transform 0.08s ease-out, box-shadow 0.08s ease-out;
+}
+
+.btn-tactile:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--line-structural, #1B1B1B);
+}
+
+.btn-tactile:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0 0 0 var(--line-structural, #1B1B1B);
+}
+
+.btn-tactile.btn-primary {
+  background-color: var(--action-bg, #394E96);
+  color: var(--action-fg, #FFFFFF);
+  border-color: var(--action-bg, #394E96);
+}
+
+.btn-label {
+  font-size: var(--step-0);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.btn-subtext {
+  font-size: var(--step--1);
+  opacity: 0.9;
+  margin-block-start: 2px;
+}
+
+/* ==========================================================================
+   MATRIZ DE ESTADOS Y RESILIENCIA
+   ========================================================================== */
+
+.state-skeleton-ledger {
+  min-block-size: 28rem;
+  border: 2px solid var(--line-structural, #1B1B1B);
+  background-color: var(--surface-raised, #FFFFFF);
+  padding: var(--space-m);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-m);
+}
+
+.skeleton-rule {
+  inline-size: 100%;
+  block-size: 1.5rem;
+  background-color: var(--surface-inset, #F7F5F0);
+  border: 1px dashed var(--line-subtle, #D8D6CE);
+}
+
+.state-empty-depot {
+  border: 2px dashed var(--line-structural, #1B1B1B);
+  padding: var(--space-xl) var(--space-m);
+  text-align: center;
+  background-color: var(--surface-inset, #F7F5F0);
+  display: grid;
+  place-content: center;
+  gap: var(--space-s);
+}
+
+.state-discrepancy-card {
+  border: 2px solid var(--alert-urgent-line, #C5192D);
+  background-color: var(--alert-urgent-bg, #FFEBEE);
+  padding: var(--space-m);
+  margin-block: var(--space-m);
+}
+
+/* ==========================================================================
+   ACCESIBILIDAD Y MOTION REDUCTION
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .btn-tactile:hover,
+  .btn-tactile:active {
+    transform: none !important;
+    box-shadow: 2px 2px 0 var(--line-structural, #1B1B1B) !important;
+  }
 }
 
 /* Skip link for screen readers */
@@ -110,7 +550,7 @@ html {
   z-index: 9999;
   font-weight: 700;
   text-decoration: underline;
-  border-radius: 0 0 0.5rem 0.5rem;
+  border-radius: 0 0 0.25rem 0.25rem;
   transition: top 0.2s ease-in-out;
 }
 
@@ -124,7 +564,7 @@ html {
   color: #1B1B1B !important;
   outline: 3px solid #FBC02D !important;
   padding: 0.25rem 0.5rem;
-  border-radius: 0.375rem;
+  border-radius: 0.25rem;
 }
 
 .theme-dark .tts-active-highlight {
@@ -139,3 +579,36 @@ html {
   outline: 4px solid #00FFFF !important;
 }
 
+/* Backward compatibility for urgency badges */
+.badge-urgency-critical {
+  border: 2px solid #C5192D;
+}
+.theme-high-contrast .badge-urgency-critical {
+  background-color: #000000 !important;
+  color: #FF5555 !important;
+  border: 2px solid #FF5555 !important;
+}
+.badge-urgency-high {
+  border: 2px solid #A85300;
+}
+.theme-high-contrast .badge-urgency-high {
+  background-color: #000000 !important;
+  color: #FFAA00 !important;
+  border: 2px solid #FFAA00 !important;
+}
+.badge-urgency-medium {
+  border: 2px solid #394E96;
+}
+.theme-high-contrast .badge-urgency-medium {
+  background-color: #000000 !important;
+  color: #FFFF00 !important;
+  border: 2px solid #FFFF00 !important;
+}
+.badge-urgency-low {
+  border: 2px solid #0D7A3E;
+}
+.theme-high-contrast .badge-urgency-low {
+  background-color: #000000 !important;
+  color: #00FF66 !important;
+  border: 2px solid #00FF66 !important;
+}

@@ -17,10 +17,10 @@ import {
   ChevronDown,
   ChevronUp,
   FileSearch,
-  ExternalLink,
   ShieldAlert,
   ArrowRight,
-  Sparkles,
+  ShieldCheck,
+  Scale,
 } from "lucide-react";
 
 interface ThreeLayerDocumentViewProps {
@@ -56,11 +56,10 @@ export function ThreeLayerDocumentView({
 
     announce(
       nextCompleted
-        ? `Tarea marcada como completada: ${targetAction.task_description}`
+        ? `Tarea completada: ${targetAction.task_description}`
         : `Tarea desmarcada: ${targetAction.task_description}`
     );
 
-    // Call API if available
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
       await fetch(`${apiUrl}/api/v1/documents/actions/${actionId}/toggle`, {
@@ -81,7 +80,7 @@ export function ThreeLayerDocumentView({
 
   // TTS Speech Generators
   const handleSpeakSummary = () => {
-    const textToRead = `Capa 1: Qué significa esto. ${doc.plain_summary}`;
+    const textToRead = `Capa 1: Qué significa esta carta. ${doc.plain_summary}`;
     announce("Leyendo el resumen en lenguaje sencillo");
     speak(textToRead);
   };
@@ -95,15 +94,15 @@ export function ThreeLayerDocumentView({
           } ${a.deadline ? `Fecha límite: ${a.deadline}.` : ""}`
       )
       .join(" ");
-    const textToRead = `Capa 2: Qué debes hacer. Tienes ${totalCount} tareas. ${tasks}`;
-    announce("Leyendo la lista de tareas requeridas");
+    const textToRead = `Capa 2: Pasos a seguir. Tienes ${totalCount} tareas. ${tasks}`;
+    announce("Leyendo lista de tareas");
     speak(textToRead);
   };
 
   const handleSpeakFullDocument = () => {
     const fullText = `Documento de ${doc.issuing_entity}. ${doc.document_type}. Plazo límite: ${
       doc.critical_deadline || "Sin fecha fija"
-    }. Capa 1: Qué significa esto: ${doc.plain_summary}. Capa 2: Qué debes hacer: ${actions
+    }. Capa 1: Qué significa esto: ${doc.plain_summary}. Capa 2: Pasos a seguir: ${actions
       .map((a, i) => `Paso ${i + 1}: ${a.task_description}.`)
       .join(" ")}. Capa 3: Preguntas recomendadas: ${doc.recommended_questions.join(" ")}`;
     announce("Leyendo documento completo en tres capas");
@@ -111,146 +110,130 @@ export function ThreeLayerDocumentView({
   };
 
   // Urgency styling helper
-  const getUrgencyBadge = (urgency: string) => {
-    switch (urgency) {
-      case "critical":
-        return {
-          label: "Plazo Crítico Urgente",
-          badgeClass:
-            "badge-urgency-critical bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300 border-red-300 dark:border-red-800",
-          icon: ShieldAlert,
-        };
-      case "high":
-        return {
-          label: "Atención Prioritaria",
-          badgeClass:
-            "badge-urgency-high bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 border-amber-300 dark:border-amber-800",
-          icon: Clock,
-        };
-      case "medium":
-        return {
-          label: "Plazo Regular",
-          badgeClass:
-            "badge-urgency-medium bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 border-blue-300 dark:border-blue-800",
-          icon: Calendar,
-        };
-      default:
-        return {
-          label: "Informativo",
-          badgeClass:
-            "badge-urgency-low bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300 border-green-300 dark:border-green-800",
-          icon: CheckCircle,
-        };
-    }
-  };
-
-  const urgencyMeta = getUrgencyBadge(doc.urgency);
-  const UrgencyIcon = urgencyMeta.icon;
+  const isUrgent = doc.urgency === "critical" || doc.urgency === "high";
 
   return (
     <article
       role="article"
       aria-label={`Análisis accesible de ${doc.document_type}`}
-      className="p-6 sm:p-8 rounded-3xl border-2 transition-all duration-200 bg-white dark:bg-[#1A1A1A] border-clearly-birch dark:border-[#383838] shadow-lg mb-12"
+      className="mb-12"
     >
-      {/* ========================================================
-          DOCUMENT HEADER: Entity, Deadlines, Readability score
-         ======================================================== */}
-      <header className="pb-6 border-b border-clearly-birch/60 dark:border-gray-800">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="flex flex-wrap items-center gap-2 mb-2">
-              {/* Urgency Badge */}
-              <span
-                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${urgencyMeta.badgeClass}`}
-              >
-                <UrgencyIcon className="w-4 h-4" aria-hidden="true" />
-                {urgencyMeta.label}
-              </span>
+      {/* ==========================================================================
+          BLOQUE ARQUITECTÓNICO A: TABLERO DE ALERTA Y FECHA CRÍTICA (SWISS STYLE)
+         ========================================================================== */}
+      <section className="crit-alert-block" role="region" aria-labelledby="crit-alert-title">
+        <div className="crit-alert-header">
+          <div className="crit-badge">
+            <span className="crit-indicator" aria-hidden="true" />
+            <span className="label-technical">
+              {isUrgent ? "PLAZO LEGAL INAMOVIBLE" : "NOTIFICACIÓN ADMINISTRATIVA REGISTRADA"}
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="crit-origin">EXPEDIENTE #{doc.id.substring(0, 14)}</span>
+            <span className="inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 border border-current">
+              <ShieldCheck className="w-3.5 h-3.5" aria-hidden="true" />
+              FH: {doc.fernandez_huerta_score} / 100
+            </span>
+          </div>
+        </div>
 
-              {/* Readability Score FH >= 80 Badge */}
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300 border border-green-300 dark:border-green-800">
-                <CheckCircle className="w-4 h-4" aria-hidden="true" />
-                Fernández-Huerta: {doc.fernandez_huerta_score} / 100 (Muy Fácil)
-              </span>
-
-              {/* Tutor Alert notification badge */}
-              {doc.tutor_alert_triggered && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 border border-purple-300 dark:border-purple-800">
-                  <UserCheck className="w-4 h-4" aria-hidden="true" />
-                  Alerta Copiada a Tutor
-                </span>
-              )}
+        <div className="crit-alert-body">
+          <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
+            <div>
+              <h1 id="crit-alert-title" className="crit-doc-title">
+                {doc.document_type}
+              </h1>
+              <p className="flex items-center gap-2 text-sm sm:text-base font-bold text-clearly-baltic dark:text-blue-300">
+                <Building className="w-4 h-4" aria-hidden="true" />
+                <span>Entidad emisora: <strong>{doc.issuing_entity}</strong></span>
+              </p>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-clearly-obsidian dark:text-white tracking-tight">
-              {doc.document_type}
-            </h1>
+            {/* Read Aloud Trigger */}
+            <button
+              type="button"
+              onClick={handleSpeakFullDocument}
+              className="btn-tactile btn-secondary self-start md:self-auto inline-flex flex-row items-center gap-2 px-4 py-2 text-xs font-bold border-2 border-line-structural"
+              aria-label="Escuchar documento completo de principio a fin"
+            >
+              <Volume2 className="w-4 h-4 text-clearly-baltic dark:text-yellow-400" aria-hidden="true" />
+              <span>Escuchar Documento Completo</span>
+            </button>
+          </div>
 
-            <p className="flex items-center gap-2 mt-1 text-sm sm:text-base font-semibold text-clearly-baltic dark:text-blue-400">
-              <Building className="w-4 h-4" aria-hidden="true" />
-              Entidad emisora: <span>{doc.issuing_entity}</span>
+          {/* Metrics Strip */}
+          <div className="crit-metrics-strip">
+            <div className="crit-metric-cell highlight">
+              <span className="label-technical">Fecha Límite Definitiva</span>
+              <time className="crit-date numeric-ledger">
+                {doc.critical_deadline || "Sin fecha fija"}
+              </time>
+              <span className="crit-sublabel">Plazo legal de respuesta</span>
+            </div>
+
+            <div className="crit-metric-cell">
+              <span className="label-technical">Días Restantes</span>
+              <div className="crit-countdown numeric-ledger">
+                {doc.days_remaining !== null ? doc.days_remaining : "—"}
+              </div>
+              <span className="crit-sublabel">
+                {doc.days_remaining !== null ? "Días para actuar o responder" : "Revisión preventiva"}
+              </span>
+            </div>
+
+            <div className="crit-metric-cell">
+              <span className="label-technical">Supervisión Tutor</span>
+              <div className="text-xl font-bold mt-2 text-clearly-obsidian dark:text-white flex items-center gap-2">
+                {doc.tutor_alert_triggered ? (
+                  <>
+                    <UserCheck className="w-5 h-5 text-green-600 dark:text-green-400" aria-hidden="true" />
+                    <span>Copia Notificada</span>
+                  </>
+                ) : (
+                  <span>Modo Individual</span>
+                )}
+              </div>
+              <span className="crit-sublabel">Sincronizado vía PASETO v4</span>
+            </div>
+          </div>
+
+          {/* Legal Guarantee & De-escalation Notice */}
+          <div className="crit-legal-guarantee">
+            <p>
+              <strong>Aclaración Inmediata de Seguridad:</strong> Este documento es una comunicación oficial, 
+              pero <u>no constituye una orden de ejecución inmediata</u>. En Ontario, todo desalojo, sanción 
+              o suspensión de beneficios exige un proceso con derecho a audiencia y defensa según las leyes de la provincia.
             </p>
           </div>
-
-          {/* Critical Deadline Countdown Box */}
-          <div className="flex flex-col items-start md:items-end justify-center p-4 rounded-2xl bg-clearly-birch-light/70 dark:bg-[#252525] border border-clearly-birch dark:border-gray-700">
-            <span className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-              Fecha Límite Fatal
-            </span>
-            <span className="text-xl sm:text-2xl font-black text-clearly-danger dark:text-red-400">
-              {doc.critical_deadline || "Sin fecha fija"}
-            </span>
-            {doc.days_remaining !== null && (
-              <span className="text-xs font-bold text-clearly-obsidian dark:text-gray-300 mt-0.5">
-                Quedan <strong>{doc.days_remaining} días</strong> para responder
-              </span>
-            )}
-          </div>
         </div>
+      </section>
 
-        {/* Global Read Aloud for this Document */}
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-gray-100 dark:border-gray-800">
-          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-            Auditado bajo fórmula oficial de Flesch/Fernández-Huerta para adultos mayores.
-          </p>
-          <button
-            type="button"
-            onClick={handleSpeakFullDocument}
-            className="px-4 py-2 font-bold text-xs sm:text-sm text-white rounded-xl shadow-sm bg-clearly-royal hover:bg-clearly-royal-hover flex items-center gap-2 transition-transform active:scale-95"
-            aria-label="Escuchar documento completo de principio a fin"
-          >
-            <Volume2 className="w-4 h-4" aria-hidden="true" />
-            <span>Escuchar Documento Completo</span>
-          </button>
-        </div>
-      </header>
-
-      {/* ========================================================
-          CAPA 1: ¿QUÉ SIGNIFICA ESTO? (PLAIN LANGUAGE SUMMARY)
-         ======================================================== */}
+      {/* ==========================================================================
+          CAPA 1: ¿QUÉ SIGNIFICA ESTA CARTA? (PLAIN LANGUAGE SUMMARY)
+         ========================================================================== */}
       <section
         role="region"
         aria-labelledby="layer-1-title"
-        className="mt-6 p-6 rounded-2xl border-2 transition-colors bg-blue-50/50 dark:bg-[#1D2433] border-clearly-baltic/40 dark:border-blue-900/60"
+        className="mb-8 p-6 sm:p-8 bg-white dark:bg-[#1A1A1A] border-2 border-clearly-obsidian dark:border-white shadow-[4px_4px_0_#1B1B1B] dark:shadow-[4px_4px_0_#FFFF00]"
       >
-        <div className="flex items-center justify-between pb-3 border-b border-blue-200/60 dark:border-blue-900/40">
+        <div className="flex items-center justify-between pb-4 border-b-2 border-clearly-obsidian dark:border-white">
           <div className="flex items-center gap-3">
-            <div
-              className="w-8 h-8 rounded-full flex items-center justify-center font-black text-white text-sm bg-clearly-baltic dark:bg-clearly-royal"
+            <span
+              className="w-8 h-8 flex items-center justify-center font-bold text-white text-sm bg-clearly-baltic dark:bg-clearly-royal border border-current"
               aria-hidden="true"
             >
               1
-            </div>
+            </span>
             <div>
               <h2
                 id="layer-1-title"
-                className="text-lg sm:text-xl font-bold text-clearly-obsidian dark:text-white"
+                className="text-xl sm:text-2xl font-bold text-clearly-obsidian dark:text-white tracking-tight"
               >
                 Capa 1: ¿Qué significa esta carta?
               </h2>
-              <span className="text-xs text-gray-500 dark:text-gray-400">
-                Explicación en lenguaje claro y tranquilizador
+              <span className="text-xs font-bold uppercase tracking-wider text-gray-600 dark:text-gray-300">
+                Explicación en lenguaje claro y sereno (Flesch / Fernández-Huerta)
               </span>
             </div>
           </div>
@@ -259,62 +242,61 @@ export function ThreeLayerDocumentView({
             type="button"
             onClick={handleSpeakSummary}
             aria-label="Escuchar la explicación de la Capa 1"
-            className="p-2 rounded-lg text-clearly-baltic dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-950 flex items-center gap-1.5 text-xs font-bold"
+            className="px-3 py-1.5 border-2 border-clearly-obsidian dark:border-white font-bold text-xs flex items-center gap-1.5 hover:bg-gray-100 dark:hover:bg-gray-800"
           >
-            <Volume2 className="w-4 h-4" aria-hidden="true" />
-            <span className="hidden sm:inline">Escuchar</span>
+            <Volume2 className="w-4 h-4 text-clearly-baltic dark:text-yellow-400" aria-hidden="true" />
+            <span>Escuchar</span>
           </button>
         </div>
 
-        <div className="mt-4 text-base sm:text-lg font-medium leading-relaxed text-clearly-obsidian dark:text-gray-100">
+        <div className="mt-4 text-base sm:text-lg leading-relaxed text-clearly-obsidian dark:text-gray-100 font-medium">
           <p>{doc.plain_summary}</p>
         </div>
       </section>
 
-      {/* ========================================================
-          CAPA 2: ¿QUÉ DEBES HACER? (INTERACTIVE CHECKLIST)
-         ======================================================== */}
+      {/* ==========================================================================
+          CAPA 2: ¿QUÉ DEBES HACER? (CHECKLIST TÁCTIL INTERACTIVO)
+         ========================================================================== */}
       <section
         role="region"
         aria-labelledby="layer-2-title"
-        className="mt-6 p-6 rounded-2xl border-2 transition-colors bg-white dark:bg-[#202020] border-clearly-birch dark:border-gray-700"
+        className="mb-8 p-6 sm:p-8 bg-white dark:bg-[#1A1A1A] border-2 border-clearly-obsidian dark:border-white shadow-[4px_4px_0_#1B1B1B] dark:shadow-[4px_4px_0_#FFFF00]"
       >
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-clearly-birch/60 dark:border-gray-800 gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b-2 border-clearly-obsidian dark:border-white gap-3">
           <div className="flex items-center gap-3">
-            <div
-              className="w-8 h-8 rounded-full flex items-center justify-center font-black text-white text-sm bg-clearly-royal"
+            <span
+              className="w-8 h-8 flex items-center justify-center font-bold text-white text-sm bg-clearly-baltic dark:bg-clearly-royal border border-current"
               aria-hidden="true"
             >
               2
-            </div>
+            </span>
             <div>
               <h2
                 id="layer-2-title"
-                className="text-lg sm:text-xl font-bold text-clearly-obsidian dark:text-white"
+                className="text-xl sm:text-2xl font-bold text-clearly-obsidian dark:text-white tracking-tight"
               >
-                Capa 2: ¿Qué debes hacer? (Checklist de Pasos)
+                Capa 2: Pasos a seguir y tareas requeridas
               </h2>
-              <span className="text-xs text-gray-500 dark:text-gray-400">
-                Marca cada tarea conforme la completes. Se sincroniza con tu tutor.
+              <span className="text-xs font-bold uppercase tracking-wider text-gray-600 dark:text-gray-300">
+                Lista de control secuencial coordinada con tu tutor familiar
               </span>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Progress indicator */}
             <div className="text-right">
-              <span className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              <span className="text-xs font-bold uppercase tracking-wider text-clearly-obsidian dark:text-white">
                 Progreso: {completedCount} de {totalCount} ({progressPercent}%)
               </span>
               <div
-                className="w-32 h-2.5 bg-gray-200 dark:bg-gray-700 rounded-full mt-1 overflow-hidden"
+                className="w-32 h-3 bg-gray-200 dark:bg-gray-700 border border-clearly-obsidian dark:border-white mt-1 overflow-hidden"
                 role="progressbar"
                 aria-valuenow={progressPercent}
                 aria-valuemin={0}
                 aria-valuemax={100}
               >
                 <div
-                  className="h-full bg-clearly-royal transition-all duration-300"
+                  className="h-full bg-clearly-baltic dark:bg-yellow-400 transition-all duration-300"
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
@@ -323,51 +305,51 @@ export function ThreeLayerDocumentView({
             <button
               type="button"
               onClick={handleSpeakActions}
-              aria-label="Escuchar la lista de pasos a seguir"
-              className="p-2 rounded-lg text-clearly-royal dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950 flex items-center gap-1.5 text-xs font-bold"
+              aria-label="Escuchar la lista de tareas"
+              className="px-3 py-1.5 border-2 border-clearly-obsidian dark:border-white font-bold text-xs flex items-center gap-1.5 hover:bg-gray-100 dark:hover:bg-gray-800"
             >
-              <Volume2 className="w-4 h-4" aria-hidden="true" />
-              <span className="hidden sm:inline">Escuchar</span>
+              <Volume2 className="w-4 h-4 text-clearly-baltic dark:text-yellow-400" aria-hidden="true" />
+              <span>Escuchar</span>
             </button>
           </div>
         </div>
 
         {/* Action Items List */}
-        <div className="mt-4 space-y-3">
+        <div className="mt-6 space-y-4">
           {actions.map((action, idx) => (
             <div
               key={action.id}
-              className={`p-4 rounded-xl border-2 transition-all flex items-start gap-4 ${
+              className={`p-4 border-2 transition-all flex items-start gap-4 ${
                 action.is_completed
-                  ? "bg-green-50/70 dark:bg-green-950/30 border-green-300 dark:border-green-800"
-                  : "bg-white dark:bg-[#252525] border-clearly-birch dark:border-gray-700 hover:border-clearly-royal"
+                  ? "bg-gray-100 dark:bg-[#252525] border-gray-400 dark:border-gray-600 opacity-80"
+                  : "bg-white dark:bg-[#1A1A1A] border-clearly-obsidian dark:border-white hover:shadow-[2px_2px_0_#1B1B1B] dark:hover:shadow-[2px_2px_0_#FFFF00]"
               }`}
             >
-              {/* Accessible Checkbox */}
+              {/* Tactile Checkbox Button */}
               <button
                 type="button"
                 role="checkbox"
                 aria-checked={action.is_completed}
                 onClick={() => handleToggleAction(action.id)}
-                className={`mt-1 w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors border-2 ${
+                className={`mt-0.5 w-8 h-8 border-2 flex items-center justify-center flex-shrink-0 transition-transform active:scale-95 ${
                   action.is_completed
-                    ? "bg-green-600 border-green-600 text-white"
-                    : "border-gray-400 dark:border-gray-500 hover:border-clearly-royal bg-white dark:bg-gray-800"
+                    ? "bg-clearly-obsidian text-white dark:bg-yellow-400 dark:text-black border-clearly-obsidian dark:border-yellow-400"
+                    : "border-clearly-obsidian dark:border-white bg-white dark:bg-black hover:bg-gray-100 dark:hover:bg-gray-800"
                 }`}
                 aria-label={`Paso ${idx + 1}: ${action.task_description}. ${
                   action.is_completed ? "Completado" : "Pendiente"
                 }`}
               >
-                {action.is_completed && <CheckCircle className="w-5 h-5" aria-hidden="true" />}
+                {action.is_completed && <CheckCircle className="w-5 h-5 stroke-[3]" aria-hidden="true" />}
               </button>
 
               <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                  <span className="label-technical text-gray-600 dark:text-gray-300">
                     Paso {idx + 1}
                   </span>
                   {action.deadline && (
-                    <span className="text-xs font-bold text-red-600 dark:text-red-400 flex items-center gap-1">
+                    <span className="text-xs font-bold text-clearly-danger dark:text-red-400 flex items-center gap-1">
                       <Clock className="w-3.5 h-3.5" aria-hidden="true" />
                       Fecha límite: {action.deadline}
                     </span>
@@ -385,9 +367,9 @@ export function ThreeLayerDocumentView({
                 </p>
 
                 {action.required_document && (
-                  <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold bg-amber-50 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                  <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold border border-clearly-obsidian dark:border-gray-500 bg-gray-50 dark:bg-gray-900 text-clearly-obsidian dark:text-gray-200">
                     <FileText className="w-3.5 h-3.5" aria-hidden="true" />
-                    <span>Papel o trámite necesario: {action.required_document}</span>
+                    <span>Documento o trámite necesario: <strong>{action.required_document}</strong></span>
                   </div>
                 )}
               </div>
@@ -398,44 +380,84 @@ export function ThreeLayerDocumentView({
         {progressPercent === 100 && (
           <div
             role="status"
-            className="mt-4 p-4 rounded-xl flex items-center gap-3 bg-green-100 text-green-900 dark:bg-green-950 dark:text-green-200 border border-green-300 dark:border-green-800"
+            className="mt-6 p-4 border-2 border-green-700 bg-green-50 dark:bg-green-950/50 text-green-900 dark:text-green-200 flex items-center gap-3"
           >
-            <CheckCircle className="w-6 h-6 flex-shrink-0 text-green-600 dark:text-green-400" />
+            <CheckCircle className="w-6 h-6 flex-shrink-0 text-green-700 dark:text-green-400 stroke-[2.5]" />
             <div>
-              <p className="font-bold">¡Excelente trabajo! Has completado todos los pasos.</p>
+              <p className="font-bold text-base">¡Todas las tareas han sido completadas con éxito!</p>
               <p className="text-xs mt-0.5">
-                Tu tutor familiar ha sido notificado del cumplimiento de los requisitos.
+                Tu tutor familiar y el registro del panel han sido actualizados en tiempo real.
               </p>
             </div>
           </div>
         )}
       </section>
 
-      {/* ========================================================
-          CAPA 3: PUNTOS DE ACLARACIÓN & PREGUNTAS RECOMENDADAS
-         ======================================================== */}
+      {/* ==========================================================================
+          BLOQUE B: MATRIZ DE COTEJO DOCUMENTAL (SWISS SUBGRID)
+         ========================================================================== */}
+      <section className="comparative-ledger" aria-labelledby="ledger-title">
+        <div className="ledger-header">
+          <h2 id="ledger-title" className="text-lg sm:text-xl font-bold text-clearly-obsidian dark:text-white">
+            Cotejo Documental: Texto Oficial vs. Lenguaje Sencillo
+          </h2>
+          <span className="label-technical">Doble Pase OCR Verificado</span>
+        </div>
+
+        <div className="ledger-table">
+          <div className="ledger-row header-row hidden sm:grid">
+            <div className="ledger-cell original">
+              <span className="label-technical">Texto Fuente Original (Ontario Legal Form)</span>
+            </div>
+            <div className="ledger-cell simplified">
+              <span className="label-technical">Interpretación y Acción Concreta</span>
+            </div>
+          </div>
+
+          <div className="ledger-row">
+            <div className="ledger-cell original">
+              <span className="original-cite">Sección Principal • Extracto Oficial</span>
+              <p className="font-mono text-xs sm:text-sm leading-relaxed" lang="en">
+                "{doc.original_extracted_text?.substring(0, 220) || 'Official Notice under the Residential Tenancies Act'}..."
+              </p>
+            </div>
+            <div className="ledger-cell simplified">
+              <strong className="action-highlight">Propósito Central:</strong>
+              <p className="text-sm sm:text-base leading-relaxed">
+                El documento establece una reclamación administrativa formal. Tu derecho principal es 
+                revisar el balance, solicitar la mediación del tribunal y no desalojar voluntariamente 
+                sin asesoría legal previa.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ==========================================================================
+          CAPA 3: AMBIGÜEDADES, PREGUNTAS Y ESCALADO A EXPERTO HUMANO
+         ========================================================================== */}
       <section
         role="region"
         aria-labelledby="layer-3-title"
-        className="mt-6 p-6 rounded-2xl border-2 transition-colors bg-amber-50/40 dark:bg-[#252219] border-amber-300 dark:border-amber-800/60"
+        className="mb-8 p-6 sm:p-8 bg-white dark:bg-[#1A1A1A] border-2 border-clearly-obsidian dark:border-white shadow-[4px_4px_0_#1B1B1B] dark:shadow-[4px_4px_0_#FFFF00]"
       >
-        <div className="flex items-center justify-between pb-3 border-b border-amber-200 dark:border-amber-900/60">
+        <div className="flex items-center justify-between pb-4 border-b-2 border-clearly-obsidian dark:border-white">
           <div className="flex items-center gap-3">
-            <div
-              className="w-8 h-8 rounded-full flex items-center justify-center font-black text-white text-sm bg-amber-600"
+            <span
+              className="w-8 h-8 flex items-center justify-center font-bold text-white text-sm bg-clearly-baltic dark:bg-clearly-royal border border-current"
               aria-hidden="true"
             >
               3
-            </div>
+            </span>
             <div>
               <h2
                 id="layer-3-title"
-                className="text-lg sm:text-xl font-bold text-clearly-obsidian dark:text-white"
+                className="text-xl sm:text-2xl font-bold text-clearly-obsidian dark:text-white tracking-tight"
               >
-                Capa 3: Puntos de Aclaración y Preguntas Sugeridas
+                Capa 3: Puntos de Aclaración y Preguntas Recomendadas
               </h2>
-              <span className="text-xs text-gray-500 dark:text-gray-400">
-                Lo que el texto no deja claro y las preguntas que debes hacer
+              <span className="text-xs font-bold uppercase tracking-wider text-gray-600 dark:text-gray-300">
+                Lo que no está explícito en la carta y qué debes preguntar
               </span>
             </div>
           </div>
@@ -443,15 +465,15 @@ export function ThreeLayerDocumentView({
 
         {/* Ambiguities flagged */}
         {doc.ambiguities_flagged && doc.ambiguities_flagged.length > 0 && (
-          <div className="mt-4">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-amber-900 dark:text-amber-300 mb-2 flex items-center gap-1.5">
+          <div className="mt-6 p-4 border-2 border-amber-600 bg-amber-50 dark:bg-amber-950/30">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-amber-900 dark:text-amber-300 mb-2 flex items-center gap-2">
               <AlertCircle className="w-4 h-4 text-amber-600" aria-hidden="true" />
-              Aspectos no aclarados en el documento original:
+              <span>Aspectos ambiguos detectados en el texto fuente:</span>
             </h3>
-            <ul className="space-y-2 text-sm sm:text-base text-clearly-obsidian dark:text-gray-200">
+            <ul className="space-y-1.5 text-sm sm:text-base font-medium text-clearly-obsidian dark:text-gray-200">
               {doc.ambiguities_flagged.map((amb, i) => (
                 <li key={i} className="flex items-start gap-2">
-                  <span className="text-amber-600 font-bold">•</span>
+                  <span className="font-bold text-amber-600">—</span>
                   <span>{amb}</span>
                 </li>
               ))}
@@ -461,66 +483,64 @@ export function ThreeLayerDocumentView({
 
         {/* Recommended Questions to Ask Entity */}
         {doc.recommended_questions && doc.recommended_questions.length > 0 && (
-          <div className="mt-5 pt-4 border-t border-amber-200/60 dark:border-amber-900/40">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-clearly-baltic dark:text-blue-400 mb-2 flex items-center gap-1.5">
-              <HelpCircle className="w-4 h-4 text-clearly-baltic dark:text-blue-400" aria-hidden="true" />
-              Preguntas recomendadas para la entidad emisora:
+          <div className="mt-6">
+            <h3 className="label-technical text-clearly-baltic dark:text-blue-300 mb-3 flex items-center gap-2">
+              <HelpCircle className="w-4 h-4" aria-hidden="true" />
+              <span>Preguntas clave que debes formular a la entidad:</span>
             </h3>
-            <ul className="space-y-2 text-sm sm:text-base text-clearly-obsidian dark:text-gray-200">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {doc.recommended_questions.map((q, i) => (
-                <li
+                <div
                   key={i}
-                  className="p-3 bg-white dark:bg-[#2C271E] rounded-xl border border-amber-200 dark:border-amber-900/60 font-semibold flex items-start gap-2"
+                  className="p-3 border-2 border-clearly-obsidian dark:border-gray-600 bg-gray-50 dark:bg-[#222222] font-semibold text-sm"
                 >
-                  <span className="text-clearly-royal font-bold">¿?</span>
+                  <span className="font-bold text-clearly-baltic dark:text-yellow-400 block mb-1">
+                    Pregunta sugerida {i + 1}:
+                  </span>
                   <span>"{q}"</span>
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
         )}
 
-        {/* Ethical Guardrail & Escalation to CLEARLY Premium */}
-        <div className="mt-6 p-4 rounded-xl bg-white dark:bg-[#1E1E1E] border-2 border-clearly-royal/60 dark:border-clearly-royal/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        {/* Ethical Guardrail & Escalation to Human Professional */}
+        <div className="mt-8 p-5 border-2 border-clearly-baltic dark:border-blue-400 bg-blue-50/60 dark:bg-[#182235] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-clearly-royal" aria-hidden="true" />
-              <span className="font-extrabold text-sm sm:text-base text-clearly-obsidian dark:text-white">
-                ¿Tu situación es compleja o necesitas acompañamiento en ventanilla?
-              </span>
+            <div className="flex items-center gap-2 font-extrabold text-base sm:text-lg text-clearly-obsidian dark:text-white">
+              <Scale className="w-5 h-5 text-clearly-baltic dark:text-blue-300" aria-hidden="true" />
+              <span>¿Necesitas acompañamiento profesional presencial o legal?</span>
             </div>
-            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-0.5">
-              CLEARLY nunca da asesoría legal por IA. Conéctate con un trabajador social o consultor
-              de inmigración humano verificado.
+            <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 mt-1 max-w-2xl">
+              CLEARLY nunca sustituye a un profesional con IA. Puedes conectarte con un trabajador social 
+              colegiado (MSW) o un consultor migratorio acreditado (RCIC) con fondos bajo custodia Stripe Escrow.
             </p>
           </div>
 
           <button
             type="button"
             onClick={() => setShowPremiumModal(true)}
-            className="px-4 py-2 font-bold text-xs sm:text-sm text-white rounded-xl shadow-md bg-clearly-baltic hover:bg-clearly-baltic/90 flex items-center gap-2 flex-shrink-0"
+            className="btn-tactile btn-primary flex-row items-center gap-2 px-5 py-3 text-sm font-bold flex-shrink-0"
           >
-            <span>Ver Expertos CLEARLY</span>
+            <span>Ver Asesores Verificados</span>
             <ArrowRight className="w-4 h-4" aria-hidden="true" />
           </button>
         </div>
       </section>
 
-      {/* ========================================================
-          CROSS-REFERENCE: ORIGINAL SCANNED TEXT (DUAL PASS)
-         ======================================================== */}
+      {/* Cross-reference Raw OCR */}
       {doc.original_extracted_text && (
-        <section className="mt-6 pt-4 border-t border-clearly-birch/60 dark:border-gray-800">
+        <section className="pt-2">
           <button
             type="button"
             onClick={() => setShowOriginalText((prev) => !prev)}
             aria-expanded={showOriginalText}
             aria-controls="original-text-panel"
-            className="w-full p-3 rounded-xl flex items-center justify-between font-bold text-sm text-clearly-obsidian dark:text-gray-300 bg-clearly-birch-light/60 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
+            className="w-full p-3 border-2 border-clearly-obsidian dark:border-gray-600 flex items-center justify-between font-bold text-xs uppercase tracking-wider text-clearly-obsidian dark:text-gray-200 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200"
           >
             <span className="flex items-center gap-2">
-              <FileSearch className="w-4 h-4 text-clearly-royal" aria-hidden="true" />
-              Comparar con el texto original en inglés / escaneado (Transparencia Total)
+              <FileSearch className="w-4 h-4" aria-hidden="true" />
+              <span>Inspección de Transparencia: Transcripción Cruda OCR</span>
             </span>
             {showOriginalText ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
           </button>
@@ -528,7 +548,7 @@ export function ThreeLayerDocumentView({
           {showOriginalText && (
             <div
               id="original-text-panel"
-              className="mt-3 p-4 rounded-xl bg-gray-50 dark:bg-[#151515] border border-gray-200 dark:border-gray-800 font-mono text-xs sm:text-sm leading-relaxed text-gray-700 dark:text-gray-300 whitespace-pre-wrap overflow-x-auto"
+              className="mt-2 p-4 border-2 border-clearly-obsidian dark:border-gray-600 bg-white dark:bg-black font-mono text-xs leading-relaxed whitespace-pre-wrap overflow-x-auto text-clearly-obsidian dark:text-gray-200"
             >
               {doc.original_extracted_text}
             </div>
@@ -536,20 +556,17 @@ export function ThreeLayerDocumentView({
         </section>
       )}
 
-      {/* CLEARLY Premium Verified Expert Modal (Stripe Escrow & LiveKit WebRTC) */}
+      {/* Premium Modal */}
       {showPremiumModal && (
         <ExpertBookingModal
           doc={doc}
           isOpen={showPremiumModal}
           onClose={() => setShowPremiumModal(false)}
           onBookingConfirmed={(booking) => {
-            announce(
-              `Consulta con ${booking.expert_name} reservada con éxito bajo garantía Escrow.`
-            );
+            announce(`Consulta con ${booking.expert_name} reservada bajo garantía Escrow.`);
           }}
         />
       )}
     </article>
   );
 }
-

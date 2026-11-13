@@ -17,7 +17,6 @@ import {
   HeartHandshake,
   PhoneCall,
   Lock,
-  Sparkles,
   BookOpen,
   Info,
   Scale,
@@ -36,42 +35,51 @@ export default function HomePage() {
   const [showAboutModal, setShowAboutModal] = useState(false);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
-      {/* Hero Welcome Announcement */}
+    <div className="clearly-viewport-canvas">
+      {/* ==========================================================================
+          HERO MANIFIESTO: MATERIALIDAD CÍVICA SOBERANA (SWISS STYLE)
+         ========================================================================== */}
       <section
         role="region"
-        aria-label="Presentación de CLEARLY"
-        className="mb-8 p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-clearly-baltic to-[#2A3B7A] text-white shadow-xl"
+        aria-label="Presentación y Manifiesto de CLEARLY"
+        className="mb-8 border-2 border-clearly-obsidian dark:border-white bg-clearly-baltic dark:bg-[#121927] text-white shadow-[4px_4px_0_#1B1B1B] dark:shadow-[4px_4px_0_#FFFF00]"
       >
-        <div className="max-w-3xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white/20 backdrop-blur-sm mb-3">
-            <Sparkles className="w-4 h-4 text-yellow-300" aria-hidden="true" />
-            Accesibilidad Gerontológica • WCAG 2.1 AAA
+        <div className="p-6 sm:p-10">
+          <div className="flex flex-wrap items-center justify-between gap-3 pb-4 mb-6 border-b-2 border-white/30 dark:border-white/20">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-black text-yellow-300 border border-yellow-300 font-bold text-xs uppercase tracking-wider">
+              <Scale className="w-4 h-4 text-yellow-300" aria-hidden="true" />
+              <span>Plataforma Cívica Soberana • WCAG 2.1 AAA & AODA</span>
+            </div>
+            <div className="text-xs font-mono uppercase tracking-wider text-blue-200">
+              Región de Peel & Gran Toronto (GTA)
+            </div>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
-            Tu comunidad. Más clara.
-          </h1>
+          <div className="max-w-4xl">
+            <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
+              Tu comunidad. Más clara.
+            </h1>
 
-          <p className="mt-3 text-base sm:text-xl font-medium text-blue-100 leading-relaxed">
-            Eliminamos las barreras del lenguaje burocrático y los formularios complejos. Sube una
-            carta para entenderla en 3 pasos sencillos, mantén informado a tu tutor familiar y
-            descubre eventos comunitarios gratuitos.
-          </p>
+            <p className="mt-4 text-base sm:text-xl font-medium text-blue-100 leading-relaxed max-w-3xl">
+              Eliminamos el lenguaje hostil de las notificaciones oficiales, cartas de desalojo y
+              formularios burocráticos. Información desglosada en 3 capas accesibles, supervisión 
+              familiar protegida y eventos comunitarios gratuitos sin publicidad.
+            </p>
 
-          <div className="mt-6 flex flex-wrap items-center gap-4 text-xs sm:text-sm font-semibold text-blue-200">
-            <span className="flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-green-400" aria-hidden="true" />
-              100% Soberano y Privado (Local-First)
-            </span>
-            <span className="flex items-center gap-1.5">
-              <BookOpen className="w-4 h-4 text-yellow-300" aria-hidden="true" />
-              Tipografía Oficial Atkinson Hyperlegible
-            </span>
-            <span className="flex items-center gap-1.5">
-              <HeartHandshake className="w-4 h-4 text-blue-300" aria-hidden="true" />
-              Supervisión Pasiva con Modo Tutor
-            </span>
+            <div className="mt-8 pt-6 border-t border-white/20 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs sm:text-sm font-bold text-blue-100">
+              <div className="flex items-center gap-2 p-2 border border-white/20 bg-white/5">
+                <ShieldCheck className="w-4 h-4 text-green-400 flex-shrink-0" aria-hidden="true" />
+                <span>100% Soberano y Privado (Local-First)</span>
+              </div>
+              <div className="flex items-center gap-2 p-2 border border-white/20 bg-white/5">
+                <BookOpen className="w-4 h-4 text-yellow-300 flex-shrink-0" aria-hidden="true" />
+                <span>Tipografía Atkinson Hyperlegible</span>
+              </div>
+              <div className="flex items-center gap-2 p-2 border border-white/20 bg-white/5">
+                <HeartHandshake className="w-4 h-4 text-blue-300 flex-shrink-0" aria-hidden="true" />
+                <span>Supervisión Pasiva con Modo Tutor</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -94,46 +102,48 @@ export default function HomePage() {
         <TutorHubDashboard />
       </div>
 
-      {/* Community Events Marketplace Hub ("Made Clear" & Lovable App Capabilities) */}
+      {/* Community Events Marketplace Hub ("Made Clear" & Civic Directory) */}
       <MadeClearCommunityHub />
 
-      {/* Accessible Footer */}
+      {/* ==========================================================================
+          ACCESSIBLE CITIZEN FOOTER (SWISS INK AESTHETIC)
+         ========================================================================== */}
       <footer
         role="contentinfo"
         aria-label="Pie de página informativo de CLEARLY"
-        className="mt-16 pt-8 pb-12 border-t-2 border-clearly-birch dark:border-gray-800 text-sm text-gray-600 dark:text-gray-400"
+        className="mt-16 pt-8 pb-12 border-t-2 border-clearly-obsidian dark:border-white text-sm text-clearly-obsidian dark:text-gray-300"
       >
         {/* Governance & Policy Quick Buttons */}
-        <div className="mb-8 p-4 rounded-2xl bg-gray-50 dark:bg-[#1E1E1E] border border-clearly-birch dark:border-[#383838] flex flex-wrap items-center justify-between gap-3">
+        <div className="mb-8 p-4 bg-gray-100 dark:bg-[#1E1E1E] border-2 border-clearly-obsidian dark:border-white shadow-[2px_2px_0_#1B1B1B] dark:shadow-[2px_2px_0_#FFFF00] flex flex-wrap items-center justify-between gap-3">
           <span className="text-xs font-bold uppercase tracking-wider text-clearly-obsidian dark:text-white flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-green-600" aria-hidden="true" />
-            Transparencia y Gobernanza CLEARLY
+            <ShieldCheck className="w-4 h-4 text-green-700 dark:text-green-400" aria-hidden="true" />
+            <span>Transparencia y Garantías Cívicas CLEARLY</span>
           </span>
           <div className="flex flex-wrap gap-2 text-xs">
             <button
               type="button"
               onClick={() => setShowA11yModal(true)}
-              className="px-3 py-1.5 rounded-lg font-bold bg-white dark:bg-[#2A2A2A] text-clearly-baltic dark:text-blue-300 border border-clearly-birch dark:border-gray-700 hover:bg-gray-100 flex items-center gap-1.5"
+              className="px-3 py-1.5 font-bold border-2 border-clearly-obsidian dark:border-white bg-white dark:bg-black text-clearly-obsidian dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800 flex items-center gap-1.5 transition-transform active:translate-y-0.5"
             >
-              <ShieldCheck className="w-3.5 h-3.5" aria-hidden="true" />
+              <ShieldCheck className="w-3.5 h-3.5 text-green-700 dark:text-green-400" aria-hidden="true" />
               <span>Accesibilidad WCAG 2.1 AAA</span>
             </button>
 
             <button
               type="button"
               onClick={() => setShowAIModal(true)}
-              className="px-3 py-1.5 rounded-lg font-bold bg-white dark:bg-[#2A2A2A] text-clearly-baltic dark:text-blue-300 border border-clearly-birch dark:border-gray-700 hover:bg-gray-100 flex items-center gap-1.5"
+              className="px-3 py-1.5 font-bold border-2 border-clearly-obsidian dark:border-white bg-white dark:bg-black text-clearly-obsidian dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800 flex items-center gap-1.5 transition-transform active:translate-y-0.5"
             >
-              <Scale className="w-3.5 h-3.5" aria-hidden="true" />
+              <Scale className="w-3.5 h-3.5 text-clearly-baltic dark:text-yellow-400" aria-hidden="true" />
               <span>IA Responsable y Ética</span>
             </button>
 
             <button
               type="button"
               onClick={() => setShowAboutModal(true)}
-              className="px-3 py-1.5 rounded-lg font-bold bg-white dark:bg-[#2A2A2A] text-clearly-baltic dark:text-blue-300 border border-clearly-birch dark:border-gray-700 hover:bg-gray-100 flex items-center gap-1.5"
+              className="px-3 py-1.5 font-bold border-2 border-clearly-obsidian dark:border-white bg-white dark:bg-black text-clearly-obsidian dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800 flex items-center gap-1.5 transition-transform active:translate-y-0.5"
             >
-              <Info className="w-3.5 h-3.5" aria-hidden="true" />
+              <Info className="w-3.5 h-3.5 text-clearly-baltic dark:text-yellow-400" aria-hidden="true" />
               <span>Acerca de CLEARLY (GTA)</span>
             </button>
           </div>
@@ -143,16 +153,16 @@ export default function HomePage() {
           <div>
             <div className="flex items-center space-x-2">
               <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-white text-base bg-clearly-baltic dark:bg-clearly-royal"
+                className="w-8 h-8 border-2 border-clearly-obsidian dark:border-white flex items-center justify-center font-bold text-white text-base bg-clearly-baltic dark:bg-clearly-royal"
                 aria-hidden="true"
               >
                 C
               </div>
-              <span className="text-lg font-bold text-clearly-obsidian dark:text-white">
+              <span className="text-lg font-black tracking-tight text-clearly-obsidian dark:text-white">
                 CLEARLY
               </span>
             </div>
-            <p className="mt-2 text-xs leading-relaxed">
+            <p className="mt-2 text-xs leading-relaxed text-gray-700 dark:text-gray-300">
               Iniciativa ciudadana de inclusión digital gerontológica en Brampton, Mississauga y el Gran Toronto (GTA). Diseñada bajo la tipografía oficial{" "}
               <strong>Atkinson Hyperlegible</strong> creada por el <em>Braille Institute</em>.
             </p>
@@ -162,7 +172,7 @@ export default function HomePage() {
             <h3 className="font-bold text-xs uppercase tracking-wider text-clearly-obsidian dark:text-white mb-2">
               Privacidad y Soberanía Local-First
             </h3>
-            <p className="text-xs leading-relaxed">
+            <p className="text-xs leading-relaxed text-gray-700 dark:text-gray-300">
               Cumplimiento estricto de la ley canadiense de privacidad <strong>PIPEDA</strong> y{" "}
               <strong>AODA</strong>. Ningún documento médico o migratorio se comparte con
               proveedores comerciales externos. Inferencia 100% en infraestructura soberana.
@@ -175,22 +185,22 @@ export default function HomePage() {
             </h3>
             <ul className="text-xs space-y-1.5 font-medium">
               <li className="flex items-center gap-1.5">
-                <PhoneCall className="w-3.5 h-3.5 text-clearly-royal" aria-hidden="true" />
+                <PhoneCall className="w-3.5 h-3.5 text-clearly-royal dark:text-yellow-400" aria-hidden="true" />
                 <span>Servicios Sociales de Ontario: Marca <strong>211</strong> (Gratis, 24/7)</span>
               </li>
               <li className="flex items-center gap-1.5">
-                <PhoneCall className="w-3.5 h-3.5 text-clearly-royal" aria-hidden="true" />
+                <PhoneCall className="w-3.5 h-3.5 text-clearly-royal dark:text-yellow-400" aria-hidden="true" />
                 <span>Servicios Municipales de Brampton: Marca <strong>311</strong></span>
               </li>
               <li className="flex items-center gap-1.5">
-                <Lock className="w-3.5 h-3.5 text-green-600" aria-hidden="true" />
+                <Lock className="w-3.5 h-3.5 text-green-700 dark:text-green-400" aria-hidden="true" />
                 <span>Almacenamiento Cifrado MinIO AES-256</span>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-8 pt-4 border-t border-gray-200 dark:border-gray-800 text-center text-xs text-gray-500">
+        <div className="mt-8 pt-4 border-t-2 border-clearly-obsidian dark:border-white text-center text-xs font-bold text-gray-600 dark:text-gray-400">
           © 2026 CLEARLY — Tu comunidad. Más clara. WCAG 2.1 AAA Compliant. Trilingüe (Español • English • ਪੰਜਾਬੀ).
         </div>
       </footer>
@@ -211,4 +221,3 @@ export default function HomePage() {
     </div>
   );
 }
-

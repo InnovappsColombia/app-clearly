@@ -117,6 +117,7 @@ export function A11yProvider({ children }: { children: ReactNode }) {
       // Theme classes
       root.classList.remove("theme-light", "theme-dark", "theme-high-contrast", "dark");
       root.classList.add(`theme-${theme}`);
+      root.setAttribute("data-theme", theme);
       if (theme === "dark" || theme === "high-contrast") {
         root.classList.add("dark");
       }

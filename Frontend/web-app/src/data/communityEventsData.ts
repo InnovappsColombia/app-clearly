@@ -191,7 +191,7 @@ export const GTA_COMMUNITY_EVENTS: GTAEvent[] = [
       en: "Mississauga Cultural Food Market & Community Celebration",
       pa: "ਮਿਸੀਸਾਗਾ ਸੱਭਿਆਚਾਰਕ ਭੋਜਨ ਮੇਲਾ ਅਤੇ ਭਾਈਚਾਰਕ ਜਸ਼ਨ",
     },
-    category: "culture",
+    category: "community",
     municipality: "mississauga",
     location_name: "Celebration Square Mississauga",
     address: "300 City Centre Dr, Mississauga, ON L5B 3C1",
