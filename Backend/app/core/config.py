@@ -129,6 +129,14 @@ class Settings(BaseModel):
     TUTOR_PAIRING_CODE_TTL_MINUTES: int = 15
     DURESS_PIN_DEFAULT: str = Field(default_factory=lambda: os.getenv("DURESS_PIN_DEFAULT", "9876"))
 
+    # Sprint 4: CLEARLY Premium, Stripe Connect Escrow & LiveKit WebRTC
+    STRIPE_SECRET_KEY: str = Field(default_factory=lambda: os.getenv("STRIPE_SECRET_KEY", "sk_test_clearly_mock_stripe_key_2026"))
+    STRIPE_WEBHOOK_SECRET: str = Field(default_factory=lambda: os.getenv("STRIPE_WEBHOOK_SECRET", "whsec_clearly_test_2026"))
+    CLEARLY_PLATFORM_FEE_PERCENT: int = 15
+    LIVEKIT_URL: str = Field(default_factory=lambda: os.getenv("LIVEKIT_URL", "http://localhost:7880"))
+    LIVEKIT_API_KEY: str = Field(default_factory=lambda: os.getenv("LIVEKIT_API_KEY", "clearly_livekit_key_2026"))
+    LIVEKIT_API_SECRET: str = Field(default_factory=lambda: os.getenv("LIVEKIT_API_SECRET", "clearly_livekit_secret_pass_2026!"))
+
 
 settings = Settings()
 

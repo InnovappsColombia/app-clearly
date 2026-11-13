@@ -182,3 +182,20 @@ services:
       - backend-api
     networks:
       - clearly-network
+
+  # ----------------------------------------------------------------------------
+  # 8. SERVIDOR DE VIDEOCONSULTA ACCESIBLE (LiveKit WebRTC) — [Sprint 4]
+  # ----------------------------------------------------------------------------
+  livekit:
+    image: livekit/livekit-server:v1.7
+    container_name: clearly-livekit
+    restart: unless-stopped
+    command: --dev --bind 0.0.0.0
+    environment:
+      LIVEKIT_KEYS: "${LIVEKIT_API_KEY:-clearly_livekit_key_2026}: ${LIVEKIT_API_SECRET:-clearly_livekit_secret_pass_2026!}"
+    ports:
+      - "7880:7880"     # HTTP signaling / WebSockets
+      - "7881:7881"     # TCP fallback
+      - "7882:7882/udp" # UDP WebRTC media
+    networks:
+      - clearly-network

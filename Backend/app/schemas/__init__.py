@@ -26,6 +26,16 @@ from app.schemas.whatsapp import (
     EvolutionWebhookPayload,
     WhatsAppProcessResult,
 )
+from app.schemas.premium import (
+    ExpertProfileResponse,
+    ExpertMatchRequest,
+    ExpertMatchResponse,
+    CreateBookingRequest,
+    BookingResponse,
+    ReleaseEscrowRequest,
+    ReleaseEscrowResponse,
+    LiveKitRoomDetails,
+)
 
 __all__ = [
     "ActionItemBase",
@@ -49,5 +59,13 @@ __all__ = [
     "DuressTriggerResponse",
     "EvolutionWebhookPayload",
     "WhatsAppProcessResult",
+    "ExpertProfileResponse",
+    "ExpertMatchRequest",
+    "ExpertMatchResponse",
+    "CreateBookingRequest",
+    "BookingResponse",
+    "ReleaseEscrowRequest",
+    "ReleaseEscrowResponse",
+    "LiveKitRoomDetails",
 ]
 

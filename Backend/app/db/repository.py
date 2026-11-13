@@ -20,6 +20,8 @@ from app.models.entities import (
     DocumentEntity,
     DocumentActionEntity,
     NotificationEntity,
+    ExpertProfileEntity,
+    PremiumBookingEntity,
     get_utc_now,
 )
 
@@ -34,6 +36,8 @@ class InMemoryRepository:
         self.documents: Dict[UUID, DocumentEntity] = {}
         self.actions: Dict[UUID, DocumentActionEntity] = {}
         self.notifications: Dict[UUID, NotificationEntity] = {}
+        self.expert_profiles: Dict[UUID, ExpertProfileEntity] = {}
+        self.bookings: Dict[UUID, PremiumBookingEntity] = {}
         self._load_seed_data()
 
     def _load_seed_data(self):
@@ -83,6 +87,27 @@ class InMemoryRepository:
             preferred_language="es",
         )
 
+        sarah_id = UUID("33333333-3333-3333-3333-333333333334")
+        maria_id = UUID("33333333-3333-3333-3333-333333333335")
+
+        self.users[sarah_id] = UserEntity(
+            id=sarah_id,
+            phone_number="+19055550304",
+            email="sarah.jenkins@clearly.example",
+            full_name="Sarah Jenkins, MSW",
+            role="expert",
+            preferred_language="es",
+        )
+
+        self.users[maria_id] = UserEntity(
+            id=maria_id,
+            phone_number="+19055550305",
+            email="maria.santos@clearly.example",
+            full_name="María Santos",
+            role="expert",
+            preferred_language="es",
+        )
+
         self.users[rosa_id] = UserEntity(
             id=rosa_id,
             phone_number="+19055550404",
@@ -104,6 +129,56 @@ class InMemoryRepository:
                 "can_view_events": True,
                 "can_hire_experts": True,
             },
+        )
+
+        # Pre-seed verified expert profiles (CLEARLY Premium)
+        exp1_id = UUID("66666666-6666-6666-6666-666666666666")
+        exp2_id = UUID("66666666-6666-6666-6666-666666666667")
+        exp3_id = UUID("66666666-6666-6666-6666-666666666668")
+
+        self.expert_profiles[exp1_id] = ExpertProfileEntity(
+            id=exp1_id,
+            user_id=david_id,
+            specialty="Consultor Regulado de Inmigración Canadiense (RCIC)",
+            license_number="R708912-CICC",
+            id_verification_status="verified",
+            hourly_rate_cents=4500,
+            bio_plain_text="Especialista con 12 años guiando a adultos mayores y familias hispanas en residencia permanente, visas y cartas de IRCC.",
+            languages_spoken=["es", "en"],
+            service_modalities=["virtual", "in_person"],
+            average_rating=4.95,
+            total_reviews=38,
+            is_available=True,
+        )
+
+        self.expert_profiles[exp2_id] = ExpertProfileEntity(
+            id=exp2_id,
+            user_id=sarah_id,
+            specialty="Trabajadora Social de Vivienda y Mediación (LTB)",
+            license_number="OCSWSSW-839120",
+            id_verification_status="verified",
+            hourly_rate_cents=4000,
+            bio_plain_text="Trabajadora social bilingüe especializada en mediación de desalojos del tribunal LTB y acuerdos justos de alquiler.",
+            languages_spoken=["es", "en"],
+            service_modalities=["virtual", "in_person"],
+            average_rating=4.98,
+            total_reviews=52,
+            is_available=True,
+        )
+
+        self.expert_profiles[exp3_id] = ExpertProfileEntity(
+            id=exp3_id,
+            user_id=maria_id,
+            specialty="Especialista en Beneficios Cívicos y Pensiones CRA",
+            license_number="Brampton-Civic-Advocate-2024",
+            id_verification_status="verified",
+            hourly_rate_cents=3500,
+            bio_plain_text="Asesora comunitaria en pensiones de vejez (OAS), Suplemento de Ingreso Garantizado (GIS) y subsidios de farmacia en Ontario.",
+            languages_spoken=["es", "en", "pa"],
+            service_modalities=["virtual"],
+            average_rating=4.90,
+            total_reviews=24,
+            is_available=True,
         )
 
         # Pre-seed canonical Brampton community events
@@ -410,6 +485,53 @@ class InMemoryRepository:
                 matched.append(ev)
         matched.sort(key=lambda e: e.start_time)
         return matched if matched else list(self.community_events.values())[:3]
+
+    # Expert Profile operations (CLEARLY Premium)
+    async def get_expert_profile(self, expert_id: UUID) -> Optional[ExpertProfileEntity]:
+        return self.expert_profiles.get(expert_id)
+
+    async def list_expert_profiles(self) -> List[ExpertProfileEntity]:
+        experts = [e for e in self.expert_profiles.values() if e.is_available]
+        experts.sort(key=lambda e: e.average_rating, reverse=True)
+        return experts
+
+    # Premium Booking operations
+    async def create_premium_booking(self, booking: PremiumBookingEntity) -> PremiumBookingEntity:
+        self.bookings[booking.id] = booking
+        return booking
+
+    async def get_premium_booking(self, booking_id: UUID) -> Optional[PremiumBookingEntity]:
+        return self.bookings.get(booking_id)
+
+    async def list_bookings_by_user(self, user_id: UUID) -> List[PremiumBookingEntity]:
+        user_bookings = [
+            b for b in self.bookings.values()
+            if b.client_senior_id == user_id or b.requested_by_user_id == user_id
+        ]
+        user_bookings.sort(key=lambda b: b.scheduled_start, reverse=True)
+        return user_bookings
+
+    async def release_booking_escrow(
+        self, booking_id: UUID, rating: int, review_text: Optional[str] = None
+    ) -> Optional[PremiumBookingEntity]:
+        booking = self.bookings.get(booking_id)
+        if not booking:
+            return None
+        booking.status = "completed"
+        booking.client_review_rating = rating
+        booking.client_review_text = review_text
+        booking.escrow_released_at = get_utc_now()
+        booking.updated_at = get_utc_now()
+
+        # Update expert review stats
+        expert = self.expert_profiles.get(booking.expert_id)
+        if expert:
+            new_total = expert.total_reviews + 1
+            new_rating = round(((expert.average_rating * expert.total_reviews) + rating) / new_total, 2)
+            expert.total_reviews = new_total
+            expert.average_rating = new_rating
+
+        return booking
 
 
 # Global singleton repository instance

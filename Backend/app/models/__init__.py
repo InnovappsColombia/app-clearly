@@ -8,6 +8,8 @@ from app.models.entities import (
     DocumentEntity,
     DocumentActionEntity,
     NotificationEntity,
+    ExpertProfileEntity,
+    PremiumBookingEntity,
 )
 
 __all__ = [
@@ -19,5 +21,7 @@ __all__ = [
     "DocumentEntity",
     "DocumentActionEntity",
     "NotificationEntity",
+    "ExpertProfileEntity",
+    "PremiumBookingEntity",
 ]
 

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { DocumentAnalysisResult, ActionItem } from "../../types/document";
 import { useA11y } from "../../context/A11yContext";
+import ExpertBookingModal from "../premium/ExpertBookingModal";
 import {
   FileText,
   Clock,
@@ -535,75 +536,18 @@ export function ThreeLayerDocumentView({
         </section>
       )}
 
-      {/* CLEARLY Premium Verified Expert Modal */}
+      {/* CLEARLY Premium Verified Expert Modal (Stripe Escrow & LiveKit WebRTC) */}
       {showPremiumModal && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="premium-modal-title"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-        >
-          <div className="relative w-full max-w-lg p-6 bg-white dark:bg-[#1E1E1E] rounded-3xl shadow-2xl border-2 border-clearly-baltic">
-            <h2
-              id="premium-modal-title"
-              className="text-xl font-black text-clearly-obsidian dark:text-white flex items-center gap-2"
-            >
-              <UserCheck className="w-6 h-6 text-clearly-baltic" aria-hidden="true" />
-              Profesionales Verificados — CLEARLY Premium
-            </h2>
-
-            <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-              Para trámites que trascienden el alcance ético de la IA, te conectamos con
-              profesionales comunitarios certificados que hablan tu idioma y conocen tu caso.
-            </p>
-
-            <div className="mt-4 p-4 rounded-2xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-bold text-base text-clearly-obsidian dark:text-white">
-                    David Ramos, MSW
-                  </h3>
-                  <p className="text-xs text-clearly-baltic dark:text-blue-400 font-semibold">
-                    Trabajador Social y Navegador de Vivienda (Peel Region)
-                  </p>
-                </div>
-                <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
-                  Verificado KYC
-                </span>
-              </div>
-              <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
-                Especialista en mediación de desalojos LTB, subsidios de emergencia de renta y
-                trámites ante Service Canada. Idiomas: Español, Inglés.
-              </p>
-              <div className="mt-3 flex items-center justify-between pt-2 border-t border-blue-200/60 dark:border-blue-900/60 text-xs">
-                <span>Tarifa asistida: $45 CAD / sesión</span>
-                <span className="font-bold text-green-700 dark:text-green-400">
-                  Disponible este viernes
-                </span>
-              </div>
-            </div>
-
-            <div className="mt-6 flex items-center justify-end gap-3">
-              <button
-                type="button"
-                onClick={() => setShowPremiumModal(false)}
-                className="px-4 py-2 font-bold text-sm text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
-              >
-                Cerrar
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  announce("Solicitud de contacto con experto registrada");
-                  setShowPremiumModal(false);
-                }}
-                className="px-5 py-2 font-bold text-sm text-white rounded-xl bg-clearly-baltic hover:bg-clearly-baltic/90 shadow-md"
-              >
-                Solicitar Contacto
-              </button>
-            </div>
-          </div>
-        </div>
+        <ExpertBookingModal
+          doc={doc}
+          isOpen={showPremiumModal}
+          onClose={() => setShowPremiumModal(false)}
+          onBookingConfirmed={(booking) => {
+            announce(
+              `Consulta con ${booking.expert_name} reservada con éxito bajo garantía Escrow.`
+            );
+          }}
+        />
       )}
     </article>
   );

@@ -123,6 +123,7 @@ docker compose ps
 | **Redis 7** | `6379` | Broker de mensajes y caché de sesiones | Sin contraseña en dev |
 | **MinIO S3** | `9000` | Almacenamiento S3 de documentos y audios | `clearly_minio_admin` / `clearly_minio_secret_key_2026!` |
 | **MinIO Console** | `9001` | Interfaz web de administración de objetos | http://localhost:9001 |
+| **LiveKit WebRTC Server** | `7880` / `7881` | Servidor de videoconferencia y subtítulos accesibles en tiempo real | `devkey` / `secret` |
 | **Backend Core (FastAPI)** | `8000` | API REST & Hero Feature de Documentos | http://localhost:8000/docs |
 | **Frontend Web (Next.js 14)** | `3000` | App Web Accesible WCAG 2.1 AAA | http://localhost:3000 |
 
@@ -171,6 +172,13 @@ npm test         # Pruebas automatizadas de accesibilidad y contraste WCAG AAA
   - [x] Sincronización colaborativa de checklists en tiempo real vía WebSockets (`/api/v1/ws/tutors/{senior_id}`).
   - [x] Panel interactivo Tutor Hub en Frontend Web (Next.js 14) accesible WCAG 2.1 AAA con selector de roles y checklist bidireccional.
   - [x] Suite de pruebas automatizadas: 41 tests backend y 11 tests frontend con 100% de aprobación.
+- [x] **Sprint 4: CLEARLY Premium (Human-in-the-Loop Escalation & Stripe Escrow)**
+  - [x] Motor de emparejamiento automático determinista según tipo documental (IRCC $\to$ RCIC David Mendoza, LTB $\to$ MSW Sarah Jenkins, CRA $\to$ Especialista Cívica María Santos) con justificación en lenguaje claro ($FH \ge 80$).
+  - [x] Custodia financiera y contratos inteligentes con Stripe Connect Escrow (15% tarifa plataforma CLEARLY / 85% retención en custodia para el profesional verificado).
+  - [x] Videoconsultas médicas y legales con LiveKit WebRTC y subtitulado gerontológico en vivo (escala tipográfica 1.5x a 2.0x, contraste WCAG 2.1 AAA $\ge 7:1$).
+  - [x] Modal interactivo de reserva CLEARLY Premium en Frontend Web (`ExpertBookingModal.tsx`) con delegación de pago a tutor familiar y sala de consulta accesible (`LiveKitVideoPreview.tsx`).
+  - [x] Supervisión y liberación de custodia Escrow desde el panel de Tutor Hub (`TutorHubDashboard.tsx`).
+  - [x] Pruebas automatizadas exhaustivas: 48 tests backend y 18 tests frontend (100% aprobadas).
 
 ---
 

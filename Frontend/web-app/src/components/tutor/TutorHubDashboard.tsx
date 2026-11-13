@@ -21,6 +21,9 @@ import {
   Copy,
   Check,
   ShieldAlert,
+  Video,
+  Star,
+  CreditCard,
 } from "lucide-react";
 
 interface TaskItem {
@@ -91,6 +94,37 @@ export function TutorHubDashboard() {
       isCompleted: false,
     },
   ]);
+
+  // CLEARLY Premium Escrow Booking State (Supervised by Carlos)
+  const [tutorBooking, setTutorBooking] = useState<{
+    expertName: string;
+    specialty: string;
+    license: string;
+    amountCents: number;
+    escrowCents: number;
+    platformFeeCents: number;
+    status: "hold_in_escrow" | "released";
+    roomName: string;
+  }>({
+    expertName: "David Mendoza, RCIC",
+    specialty: "Consultor Regulado de Inmigración Canadiense (RCIC)",
+    license: "R708912-CICC",
+    amountCents: 4500,
+    escrowCents: 3825,
+    platformFeeCents: 675,
+    status: "hold_in_escrow",
+    roomName: "clearly-room-ircc-fairness",
+  });
+  const [isEscrowProcessing, setIsEscrowProcessing] = useState(false);
+
+  const handleReleaseEscrowByTutor = () => {
+    setIsEscrowProcessing(true);
+    setTimeout(() => {
+      setTutorBooking((prev) => ({ ...prev, status: "released" }));
+      setIsEscrowProcessing(false);
+      announce("Pago Escrow liberado exitosamente al consultor David Mendoza.");
+    }, 500);
+  };
 
   // Expiration timer for pairing code
   useEffect(() => {
@@ -417,25 +451,99 @@ export function TutorHubDashboard() {
             </div>
           </div>
 
-          {/* Escalation to CLEARLY Premium Action */}
-          <div className="mt-6 p-5 rounded-2xl bg-gradient-to-r from-blue-900 to-indigo-950 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-yellow-300" aria-hidden="true" />
-                <h4 className="font-black text-lg">¿El trámite legal es complejo?</h4>
+          {/* CLEARLY Premium Escrow Consultation Supervision Panel */}
+          <section
+            aria-labelledby="tutor-premium-heading"
+            className="mt-6 p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-[#121B33] to-[#0B0F1D] text-white border-2 border-clearly-baltic shadow-xl"
+          >
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-blue-900/60">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-2xl bg-clearly-baltic text-white">
+                  <UserCheck className="w-6 h-6 text-clearly-lemon" aria-hidden="true" />
+                </div>
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-wider text-blue-300">
+                    CLEARLY Premium • Garantía Stripe Escrow
+                  </span>
+                  <h4 id="tutor-premium-heading" className="text-lg font-black text-white">
+                    Asesoría Activa: {tutorBooking.expertName}
+                  </h4>
+                  <p className="text-xs text-gray-300">
+                    {tutorBooking.specialty} • Licencia: {tutorBooking.license}
+                  </p>
+                </div>
               </div>
-              <p className="mt-1 text-sm text-blue-100">
-                Puedes contratar a un consultor de inmigración regulado (RCIC) o trabajador social
-                verificado en CLEARLY Premium para acompañar a tu madre en Brampton.
-              </p>
+
+              <span
+                className={`px-3 py-1.5 rounded-full text-xs font-black flex items-center gap-1.5 border ${
+                  tutorBooking.status === "released"
+                    ? "bg-green-950 text-green-300 border-green-700"
+                    : "bg-yellow-950/80 text-clearly-lemon border-yellow-700/80"
+                }`}
+              >
+                <Lock className="w-3.5 h-3.5" />
+                {tutorBooking.status === "released"
+                  ? "Escrow Liberado"
+                  : "Retenido en Escrow"}
+              </span>
             </div>
-            <button
-              type="button"
-              className="px-5 py-2.5 text-xs sm:text-sm font-black rounded-xl bg-yellow-400 text-black hover:bg-yellow-300 transition-colors whitespace-nowrap"
-            >
-              Consultar Profesionales ($45/hr)
-            </button>
-          </div>
+
+            <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div className="p-3 rounded-xl bg-black/40 border border-gray-800">
+                <span className="text-gray-400 block">Total en Custodia</span>
+                <strong className="text-sm font-black text-white">
+                  ${(tutorBooking.amountCents / 100).toFixed(2)} CAD
+                </strong>
+              </div>
+              <div className="p-3 rounded-xl bg-black/40 border border-gray-800">
+                <span className="text-gray-400 block">Pago Profesional (85%)</span>
+                <strong className="text-sm font-black text-green-400">
+                  ${(tutorBooking.escrowCents / 100).toFixed(2)} CAD
+                </strong>
+              </div>
+              <div className="p-3 rounded-xl bg-black/40 border border-gray-800">
+                <span className="text-gray-400 block">Tarifa Plataforma (15%)</span>
+                <strong className="text-sm font-black text-blue-300">
+                  ${(tutorBooking.platformFeeCents / 100).toFixed(2)} CAD
+                </strong>
+              </div>
+            </div>
+
+            <p className="mt-4 text-xs text-blue-200 leading-relaxed">
+              Como tutor autorizado, puedes verificar la calidad de la consulta en video LiveKit y autorizar
+              la transferencia final a la cuenta Stripe Connect del profesional.
+            </p>
+
+            <div className="mt-4 pt-3 border-t border-blue-900/60 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2 text-xs text-gray-300">
+                <Video className="w-4 h-4 text-green-400" />
+                <span>Sala WebRTC: <code className="font-mono text-white">{tutorBooking.roomName}</code></span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                {tutorBooking.status === "hold_in_escrow" ? (
+                  <button
+                    type="button"
+                    disabled={isEscrowProcessing}
+                    onClick={handleReleaseEscrowByTutor}
+                    className="px-5 py-2.5 rounded-xl bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white font-black text-xs sm:text-sm flex items-center gap-2 shadow-lg"
+                  >
+                    <ShieldCheck className="w-4 h-4" />
+                    <span>
+                      {isEscrowProcessing
+                        ? "Liberando fondos..."
+                        : "Autorizar y Liberar Escrow ($45.00)"}
+                    </span>
+                  </button>
+                ) : (
+                  <span className="px-4 py-2 rounded-xl bg-green-900/40 text-green-300 border border-green-800 text-xs font-bold flex items-center gap-1.5">
+                    <CheckCircle2 className="w-4 h-4" />
+                    Pago transferido al consultor con éxito
+                  </span>
+                )}
+              </div>
+            </div>
+          </section>
         </div>
       )}
 

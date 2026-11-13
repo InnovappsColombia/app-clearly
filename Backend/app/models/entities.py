@@ -136,3 +136,42 @@ class NotificationEntity(BaseModel):
     is_read: bool = False
     metadata: Dict[str, Any] = Field(default_factory=dict)
     created_at: datetime = Field(default_factory=get_utc_now)
+
+
+class ExpertProfileEntity(BaseModel):
+    id: UUID = Field(default_factory=uuid4)
+    user_id: UUID
+    specialty: str
+    license_number: str
+    id_verification_status: str = "verified"
+    hourly_rate_cents: int = 4500  # $45.00 CAD
+    bio_plain_text: str
+    languages_spoken: List[str] = Field(default_factory=lambda: ["es", "en"])
+    service_modalities: List[str] = Field(default_factory=lambda: ["virtual", "in_person"])
+    average_rating: float = 5.0
+    total_reviews: int = 0
+    is_available: bool = True
+    created_at: datetime = Field(default_factory=get_utc_now)
+
+
+class PremiumBookingEntity(BaseModel):
+    id: UUID = Field(default_factory=uuid4)
+    client_senior_id: UUID
+    requested_by_user_id: UUID
+    expert_id: UUID
+    document_id: Optional[UUID] = None
+    modality: str = "virtual"
+    scheduled_start: datetime
+    scheduled_end: datetime
+    livekit_room_name: str
+    livekit_token: Optional[str] = None
+    status: str = "escrow_held"  # pending, escrow_held, in_progress, completed, cancelled, disputed
+    stripe_payment_intent_id: str
+    amount_cents: int = 4500
+    expert_payout_cents: int = 3825
+    platform_fee_cents: int = 675
+    client_review_rating: Optional[int] = None
+    client_review_text: Optional[str] = None
+    escrow_released_at: Optional[datetime] = None
+    created_at: datetime = Field(default_factory=get_utc_now)
+    updated_at: datetime = Field(default_factory=get_utc_now)
