@@ -24,6 +24,16 @@ from app.models.entities import (
     PremiumBookingEntity,
     get_utc_now,
 )
+from app.schemas.events import (
+    SchemaOrgEvent,
+    Place,
+    PostalAddress,
+    GeoCoordinates,
+    Offer,
+    Organizer,
+    PlainLanguageAnswers,
+    TransitGuidance,
+)
 
 
 class InMemoryRepository:
@@ -33,6 +43,7 @@ class InMemoryRepository:
         self.pairing_codes: Dict[str, TutorPairingCodeEntity] = {}
         self.duress_alerts: Dict[UUID, DuressAlertEntity] = {}
         self.community_events: Dict[UUID, CommunityEventEntity] = {}
+        self.schema_events: Dict[UUID, SchemaOrgEvent] = {}
         self.documents: Dict[UUID, DocumentEntity] = {}
         self.actions: Dict[UUID, DocumentActionEntity] = {}
         self.notifications: Dict[UUID, NotificationEntity] = {}
@@ -236,6 +247,137 @@ class InMemoryRepository:
             is_wheelchair_accessible=True,
             is_senior_friendly=True,
             is_free=True,
+        )
+
+        # Pre-seed Schema.org / Event models with Plain Language Q&A (ES, EN, PA)
+        s_ev1_id = UUID("77777777-7777-7777-7777-777777777771")
+        self.schema_events[s_ev1_id] = SchemaOrgEvent(
+            id=s_ev1_id,
+            name="Taller de Bienestar y Yoga Suave en Silla",
+            description="Una clase grupal muy suave de respiración y estiramiento sentado, diseñada para relajar articulaciones sin esfuerzo físico pesado.",
+            startDate=now + timedelta(days=5, hours=10),
+            endDate=now + timedelta(days=5, hours=11, minutes=30),
+            category="seniors",
+            municipality="brampton",
+            is_wheelchair_accessible=True,
+            is_senior_friendly=True,
+            location=Place(
+                name="Downtown Brampton Community Centre",
+                address=PostalAddress(
+                    streetAddress="8 Central Park Dr",
+                    addressLocality="Brampton",
+                    postalCode="L6T 1B4",
+                ),
+                geo=GeoCoordinates(latitude=43.7082, longitude=-79.7225),
+            ),
+            offers=Offer(
+                price=0.0,
+                priceCurrency="CAD",
+                is_free=True,
+                ticket_url="https://brampton.ca/recreation",
+            ),
+            organizer=Organizer(
+                name="Parks & Recreation Brampton & Biblioteca Central",
+                email="seniors@brampton.ca",
+                telephone="311",
+            ),
+            plain_language_qa={
+                "es": PlainLanguageAnswers(
+                    q1_what="Es una actividad comunitaria abierta y accesible: Taller de Yoga Suave en Silla.",
+                    q2_when_where="Se realiza en el Centro Comunitario Downtown Brampton (8 Central Park Dr).",
+                    q3_cost="Es completamente gratuito. No tienes que pagar nada por entrar.",
+                    q4_registration="Sí, necesitas anotarte antes llamando al 311 para apartar tu silla.",
+                    q5_what_to_do="Llega a la entrada principal y busca la mesa de bienvenida.",
+                    q6_what_to_check="Lleva calzado cómodo. Cuenta con rampas de acceso y baños adaptados.",
+                    readability_score_fh=86.5,
+                ),
+                "en": PlainLanguageAnswers(
+                    q1_what="A gentle seated breathing and balance workshop for older adults.",
+                    q2_when_where="Downtown Brampton Community Centre at 8 Central Park Dr.",
+                    q3_cost="Free of charge. You do not need to pay any money.",
+                    q4_registration="Yes, please call 311 to reserve your chair.",
+                    q5_what_to_do="Walk in the main entrance to meet friendly staff.",
+                    q6_what_to_check="Wear warm comfortable clothes and non-slip shoes.",
+                    readability_score_fre=88.2,
+                ),
+                "pa": PlainLanguageAnswers(
+                    q1_what="ਇੱਕ ਸੁਖਾਲੀ ਕੁਰਸੀ ਯੋਗਾ ਵਰਕਸ਼ਾਪ ਜੋ ਬਜ਼ੁਰਗਾਂ ਲਈ ਬਣਾਈ ਗਈ ਹੈ।",
+                    q2_when_where="ਡਾਊਨਟਾਊਨ ਬ੍ਰੈਂਪਟਨ ਕਮਿਊਨਿਟੀ ਸੈਂਟਰ ਵਿਖੇ।",
+                    q3_cost="ਬਿਲਕੁਲ ਮੁਫ਼ਤ। ਕੋਈ ਪੈਸੇ ਨਹੀਂ ਲਏ ਜਾਣਗੇ।",
+                    q4_registration="ਹਾਂ, 311 'ਤੇ ਕਾਲ ਕਰਕੇ ਰਜਿਸਟਰ ਕਰੋ।",
+                    q5_what_to_do="ਮੁੱਖ ਦਰਵਾਜ਼ੇ 'ਤੇ ਮਦਦਗਾਰਾਂ ਨੂੰ ਮਿਲੋ।",
+                    q6_what_to_check="ਆਰਾਮਦਾਇਕ ਕੱਪੜੇ ਪਾ ਕੇ ਆਓ। ਰੈਂਪ ਉਪਲਬਧ ਹਨ।",
+                ),
+            },
+            transit_guidance=TransitGuidance(
+                transit_mode_url="https://www.google.com/maps/dir/?api=1&destination=8%20Central%20Park%20Dr,%20Brampton,%20ON&travelmode=transit",
+                gtfs_accessible_stop_hint="Brampton Transit Züm Ruta 501 parada accesible con rampa a nivel a 50 metros.",
+                recommended_arrival_margin_minutes=15,
+            ),
+        )
+
+        s_ev2_id = UUID("77777777-7777-7777-7777-777777777772")
+        self.schema_events[s_ev2_id] = SchemaOrgEvent(
+            id=s_ev2_id,
+            name="Café Digital: Uso de Celulares y Trámites del Gobierno para Adultos Mayores",
+            description="Sesión práctica donde voluntarios jóvenes te enseñan a usar WhatsApp, revisar correos y entrar a tu cuenta de Service Canada.",
+            startDate=now + timedelta(days=8, hours=14),
+            endDate=now + timedelta(days=8, hours=16),
+            category="education",
+            municipality="toronto",
+            is_wheelchair_accessible=True,
+            is_senior_friendly=True,
+            location=Place(
+                name="Toronto Public Library - Reference Library",
+                address=PostalAddress(
+                    streetAddress="789 Yonge St",
+                    addressLocality="Toronto",
+                    postalCode="M4W 2G8",
+                ),
+                geo=GeoCoordinates(latitude=43.6718, longitude=-79.3868),
+            ),
+            offers=Offer(
+                price=0.0,
+                priceCurrency="CAD",
+                is_free=True,
+            ),
+            organizer=Organizer(
+                name="Toronto Public Library & Newcomer Services",
+                email="digital@tpl.ca",
+            ),
+            plain_language_qa={
+                "es": PlainLanguageAnswers(
+                    q1_what="Es una actividad comunitaria abierta para aprender a usar el teléfono sin miedo.",
+                    q2_when_where="Biblioteca de Referencia de Toronto en 789 Yonge St cerca del metro.",
+                    q3_cost="Es gratis. Incluye café y té sin costo alguno.",
+                    q4_registration="No necesitas anotarte antes. Entrada libre.",
+                    q5_what_to_do="Entra a la sala del primer piso con tu teléfono cargado.",
+                    q6_what_to_check="El metro Bloor-Yonge tiene ascensor directo a la calle.",
+                    readability_score_fh=84.2,
+                ),
+                "en": PlainLanguageAnswers(
+                    q1_what="A friendly drop-in tech café teaching smartphones and government apps.",
+                    q2_when_where="Toronto Reference Library at 789 Yonge St.",
+                    q3_cost="Completely free with warm coffee and tea provided.",
+                    q4_registration="No sign-up needed. Just drop in with your device.",
+                    q5_what_to_do="Head to the first-floor learning room to meet a helper.",
+                    q6_what_to_check="Bloor-Yonge subway has street elevators for easy access.",
+                    readability_score_fre=85.6,
+                ),
+                "pa": PlainLanguageAnswers(
+                    q1_what="ਇੱਕ ਡਿਜੀਟਲ ਕੈਫੇ ਜਿੱਥੇ ਫ਼ੋਨ ਚਲਾਉਣਾ ਸਿਖਾਇਆ ਜਾਂਦਾ ਹੈ।",
+                    q2_when_where="ਟੋਰਾਂਟੋ ਰੈਫਰੈਂਸ ਲਾਇਬ੍ਰੇਰੀ (789 Yonge St) ਵਿਖੇ।",
+                    q3_cost="ਬਿਲਕੁਲ ਮੁਫ਼ਤ।",
+                    q4_registration="ਕੋਈ ਰਜਿਸਟ੍ਰੇਸ਼ਨ ਦੀ ਲੋੜ ਨਹੀਂ।",
+                    q5_what_to_do="ਪਹਿਲੀ ਮੰਜ਼ਿਲ 'ਤੇ ਕਲਾਸਰੂਮ ਵਿੱਚ ਜਾਓ।",
+                    q6_what_to_check="ਸਬਵੇਅ ਸਟੇਸ਼ਨ 'ਤੇ ਲਿਫਟ ਉਪਲਬਧ ਹੈ।",
+                ),
+            },
+            transit_guidance=TransitGuidance(
+                transit_mode_url="https://www.google.com/maps/dir/?api=1&destination=789%20Yonge%20St,%20Toronto,%20ON&travelmode=transit",
+                gtfs_accessible_stop_hint="Estación de metro TTC Bloor-Yonge con ascensor directo a la calle Yonge.",
+                recommended_arrival_margin_minutes=10,
+            ),
         )
 
         # Pre-seed sample document for Elena with collaborative action
@@ -485,6 +627,19 @@ class InMemoryRepository:
                 matched.append(ev)
         matched.sort(key=lambda e: e.start_time)
         return matched if matched else list(self.community_events.values())[:3]
+
+    # Schema.org Events operations
+    async def list_schema_events(self) -> List[SchemaOrgEvent]:
+        events = list(self.schema_events.values())
+        events.sort(key=lambda e: e.startDate)
+        return events
+
+    async def get_schema_event(self, event_id: UUID) -> Optional[SchemaOrgEvent]:
+        return self.schema_events.get(event_id)
+
+    async def create_schema_event(self, event: SchemaOrgEvent) -> SchemaOrgEvent:
+        self.schema_events[event.id] = event
+        return event
 
     # Expert Profile operations (CLEARLY Premium)
     async def get_expert_profile(self, expert_id: UUID) -> Optional[ExpertProfileEntity]:

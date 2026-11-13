@@ -10,6 +10,7 @@ from app.api.v1.webhooks import router as webhooks_router
 from app.api.v1.tutors import router as tutors_router
 from app.api.v1.websocket import router as websocket_router
 from app.api.v1.premium import router as premium_router
+from app.api.v1.events import router as events_router
 
 api_router = APIRouter()
 
@@ -19,4 +20,5 @@ api_router.include_router(webhooks_router, prefix="/webhooks", tags=["WhatsApp &
 api_router.include_router(tutors_router, prefix="/tutors", tags=["Tutor Hub & Handshake"])
 api_router.include_router(websocket_router, tags=["WebSocket Real-Time Sync"])
 api_router.include_router(premium_router, prefix="/premium", tags=["CLEARLY Premium & Escrow Bookings"])
+api_router.include_router(events_router, prefix="/events", tags=["Civic Events & Inclusión Comunitaria"])
 
